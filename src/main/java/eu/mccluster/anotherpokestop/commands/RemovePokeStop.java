@@ -27,10 +27,10 @@ public class RemovePokeStop implements CommandExecutor {
         Player p = (Player) src;
         if(_plugin._currentPokestopRemovers.contains(p.getUniqueId())) {
             _plugin._currentPokestopRemovers.remove(p.getUniqueId());
-            p.sendMessage(Utils.toText(_config.enableRemover));
+            p.sendMessage(Utils.toText(_config.disableRemover));
         } else {
             _plugin._currentPokestopRemovers.add(p.getUniqueId());
-            p.sendMessage(Utils.toText(_config.disableRemover));
+            p.sendMessage(Utils.toText(_config.enableRemover));
         }
         return CommandResult.success();
     }

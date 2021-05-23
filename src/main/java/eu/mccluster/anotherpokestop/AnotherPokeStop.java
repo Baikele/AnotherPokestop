@@ -93,7 +93,7 @@ public class AnotherPokeStop {
                 .description(Utils.toText("%6Create a new dummy Pokestop"))
                 .arguments(GenericArguments.optional(new RGBElement(Text.of("rgb"))))
                 .build();
-        Sponge.getCommandManager().register(AnotherPokeStopPlugin.getInstance(), setPokeStop, "setpokestopdummy");
+        Sponge.getCommandManager().register(AnotherPokeStopPlugin.getInstance(), setPokeStopDummy, "setpokestopdummy");
     }
 
 
