@@ -47,6 +47,9 @@ public class AnotherPokeStopConfig extends Config {
     @Order(10)
     public AnotherPokeStopDropMenuConfig menuTexts = new AnotherPokeStopDropMenuConfig();
 
+    @Order(11)
+    public RocketConfig rocketSettings = new RocketConfig();
+
     @Override
     public File getFile() {
         return null;

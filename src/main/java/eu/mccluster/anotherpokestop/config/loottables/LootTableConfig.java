@@ -11,11 +11,14 @@ public class LootTableConfig extends Config {
 
     @Order(1)
     public List<LootTableData> lootData = new ArrayList<>();
+    public List<RocketTableData> rocketData = new ArrayList<>();
 
     public LootTableConfig() {
 
         lootData.add(new LootTableData());
+        rocketData.add(new RocketTableData());
     }
+
 
     @Override
     public File getFile() {

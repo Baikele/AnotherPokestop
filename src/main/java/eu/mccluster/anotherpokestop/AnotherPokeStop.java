@@ -1,9 +1,8 @@
 package eu.mccluster.anotherpokestop;
 
 import com.pixelmonmod.pixelmon.Pixelmon;
-import eu.mccluster.anotherpokestop.Listener.InteractEntityListener;
-import eu.mccluster.anotherpokestop.Listener.PlayerLeftListener;
-import eu.mccluster.anotherpokestop.Listener.PokeStopFishingEvent;
+import eu.mccluster.anotherpokestop.Listener.*;
+import eu.mccluster.anotherpokestop.commands.Apsreload;
 import eu.mccluster.anotherpokestop.commands.RemovePokeStop;
 import eu.mccluster.anotherpokestop.commands.SetPokeStop;
 import eu.mccluster.anotherpokestop.commands.SetPokeStopDummy;
@@ -11,9 +10,12 @@ import eu.mccluster.anotherpokestop.commands.elements.RGBElement;
 import eu.mccluster.anotherpokestop.config.AnotherPokeStopMainConfig;
 import eu.mccluster.anotherpokestop.config.PokeStopRegistry;
 import eu.mccluster.anotherpokestop.config.loottables.LootTableStart;
+import eu.mccluster.anotherpokestop.config.trainerConfig.TrainerBaseConfig;
 import eu.mccluster.anotherpokestop.objects.PokeStopData;
+import eu.mccluster.anotherpokestop.objects.TrainerObject;
 import eu.mccluster.anotherpokestop.utils.Utils;
 import lombok.Getter;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.args.GenericArguments;
@@ -38,10 +40,20 @@ public class AnotherPokeStop {
     private static PokeStopRegistry _registry;
 
     @Getter
+    private static TrainerBaseConfig _trainer;
+
+    @Getter
     private static ConcurrentHashMap<UUID, List<ItemStack>> _currentDrops = new ConcurrentHashMap<>();
 
     @Getter
     private static ConcurrentHashMap<UUID, PokeStopData> _registeredPokeStops = new ConcurrentHashMap<>();
+
+    @Getter
+    private static ConcurrentHashMap<EntityPlayerMP, TrainerObject> _currentBattles = new ConcurrentHashMap<>();
+
+    @Getter
+    private static ConcurrentHashMap<UUID, UUID> _usedPokestop = new ConcurrentHashMap<>();
+
 
     public List<UUID> _currentPokestopRemovers = new ArrayList<>();
 
@@ -62,12 +74,20 @@ public class AnotherPokeStop {
         _config = new AnotherPokeStopMainConfig(new File(AnotherPokeStopPlugin.getInstance().getDataFolder(), "AnotherPokeStop.conf"));
         _lootConfig = new LootTableStart(new File(AnotherPokeStopPlugin.getInstance().getDataFolder(), "Loottable.conf"));
         _registry = new PokeStopRegistry(new File(AnotherPokeStopPlugin.getInstance().getDataFolder(), "PokestopRegistry.conf"));
+        _trainer = new TrainerBaseConfig(new File(AnotherPokeStopPlugin.getInstance().getDataFolder(), "RocketTrainer.conf"));
         _registry.load();
         _lootConfig.load();
         _config.load();
+        _trainer.load();
         registerListeners();
         registerCommands();
         populatePokeStopHashMap();
+    }
+
+    public void onReload() {
+        _config.load();
+        _lootConfig.load();
+        _trainer.load();
     }
 
 
@@ -90,10 +110,17 @@ public class AnotherPokeStop {
         CommandSpec setPokeStopDummy = CommandSpec.builder()
                 .executor((new SetPokeStopDummy(_config.config)))
                 .permission("anotherpokestop.setdummy")
-                .description(Utils.toText("%6Create a new dummy Pokestop"))
+                .description(Utils.toText("&6Create a new dummy Pokestop"))
                 .arguments(GenericArguments.optional(new RGBElement(Text.of("rgb"))))
                 .build();
         Sponge.getCommandManager().register(AnotherPokeStopPlugin.getInstance(), setPokeStopDummy, "setpokestopdummy");
+
+        CommandSpec apsReload = CommandSpec.builder()
+                .executor(new Apsreload())
+                .permission("anotherpokestop.reload")
+                .description(Utils.toText("&6Reloads every config of the plugin"))
+                .build();
+        Sponge.getCommandManager().register(AnotherPokeStopPlugin.getInstance(), apsReload, "apsreload");
     }
 
 
@@ -105,6 +132,8 @@ public class AnotherPokeStop {
         Sponge.getEventManager().registerListeners(AnotherPokeStopPlugin.getInstance(), new PokeStopFishingEvent());
         Sponge.getEventManager().registerListeners(AnotherPokeStopPlugin.getInstance(), entityListener);
         Pixelmon.EVENT_BUS.register(entityListener);
+        Pixelmon.EVENT_BUS.register(new BattleEndListener(this, _config.config));
+        Pixelmon.EVENT_BUS.register(new BattleStartListener(this));
     }
 
     private void populatePokeStopHashMap() {

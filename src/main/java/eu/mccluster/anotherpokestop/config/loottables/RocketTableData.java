@@ -4,7 +4,7 @@ import eu.mccluster.dependency.configmanager.api.annotations.Order;
 
 import java.io.File;
 
-public class LootTableData extends Config {
+public class RocketTableData extends Config {
 
     @Order(1)
     public String lootItem = "pixelmon:poke_ball";

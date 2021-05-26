@@ -5,6 +5,7 @@ import com.pixelmonmod.pixelmon.entities.EntityPokestop;
 import eu.mccluster.anotherpokestop.AnotherPokeStop;
 import eu.mccluster.anotherpokestop.config.AnotherPokeStopConfig;
 import eu.mccluster.anotherpokestop.config.PokeStopRegistry;
+import eu.mccluster.anotherpokestop.utils.RocketUtils;
 import eu.mccluster.anotherpokestop.utils.Utils;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -65,12 +66,24 @@ public class InteractEntityListener {
         }
 
         if(AnotherPokeStop.getRegisteredPokeStops().containsKey(pokeStopId) && !(p.hasPermission("anotherpokestop." + pokeStopId.toString() + ".cooldown"))) {
+            AnotherPokeStop.getUsedPokestop().put(p.getUniqueId(), pokeStopId);
 
-                List<ItemStack> lootList = Utils.listToNative(Utils.genPokeStopLoot());
+            if(_config.rocketSettings.rocketEvent) {
+                int rocketEvent = _config.rocketSettings.rocketChance;
+                int rocketRoll = (int) (100 * Math.random());
+                if (rocketEvent >= rocketRoll) {
+                    RocketUtils.genRocketDialogue(pokeStopId, p)
+                            .open((EntityPlayerMP) p);
+                }
+            } else {
+
+                List<ItemStack> lootList = Utils.listToNative(Utils.genPokeStopLoot(false));
                 AnotherPokeStop.getCurrentDrops().put(p.getUniqueId(), lootList);
                 Utils.dropScreen(_config.menuTexts.header, _config.menuTexts.buttonText, (EntityPlayerMP) p, lootList);
                 Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "lp user " + p.getName() + " permission settemp anotherpokestop." + pokeStopId.toString() + ".cooldown true " + _config.cooldown + "h");
-            } else if(AnotherPokeStop.getRegisteredPokeStops().containsKey(pokeStopId)) {
+
+            }
+        } else if(AnotherPokeStop.getRegisteredPokeStops().containsKey(pokeStopId)) {
                 p.sendMessage(Utils.toText(_config.cooldownText));
             }
         }
