@@ -4,8 +4,10 @@ Commands:
 - /setpokestop <Red Green Blue> <<<---- Argument optional
 - /setpokestopdummy
 - /removepokestop
+- /apsreload
 
 Permissions:
 - anotherpokestop.set
 - anotherpokestop.remove
 - anotherpokestop.setdummy
+- anotherpokestop.reload
