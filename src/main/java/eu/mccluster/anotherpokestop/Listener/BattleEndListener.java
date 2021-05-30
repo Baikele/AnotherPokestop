@@ -27,8 +27,11 @@ public class BattleEndListener {
         _instance.getCurrentBattles().forEach((playerMP, trainer) -> {
             if(event.bc.equals(trainer.getBattleController())) {
                 if(event.cause == EnumBattleEndCause.FLEE) {
+                    Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "lp user " + playerMP.getName() + " permission settemp anotherpokestop." + AnotherPokeStop.getUsedPokestop().get(playerMP.getUniqueID()).toString() + ".cooldown true " + _config.cooldown + "h");
                 } else if(event.cause == EnumBattleEndCause.FORCE) {
+                    Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "lp user " + playerMP.getName() + " permission settemp anotherpokestop." + AnotherPokeStop.getUsedPokestop().get(playerMP.getUniqueID()).toString() + ".cooldown true " + _config.cooldown + "h");
                 } else if(event.cause == EnumBattleEndCause.FORFEIT) {
+                    Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "lp user " + playerMP.getName() + " permission settemp anotherpokestop." + AnotherPokeStop.getUsedPokestop().get(playerMP.getUniqueID()).toString() + ".cooldown true " + _config.cooldown + "h");
                 } else {
                     event.results.forEach(((battleParticipant, battleResults) -> {
                         if(battleParticipant.getEntity() instanceof EntityPlayerMP) {
@@ -36,6 +39,9 @@ public class BattleEndListener {
                                 List<ItemStack> lootList = Utils.listToNative(Utils.genPokeStopLoot(true));
                                 AnotherPokeStop.getCurrentDrops().put(playerMP.getUniqueID(), lootList);
                                 Utils.dropScreen(_config.menuTexts.header, _config.menuTexts.buttonText, playerMP, lootList);
+                                Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "lp user " + playerMP.getName() + " permission settemp anotherpokestop." + AnotherPokeStop.getUsedPokestop().get(playerMP.getUniqueID()).toString() + ".cooldown true " + _config.cooldown + "h");
+
+                            } else {
                                 Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "lp user " + playerMP.getName() + " permission settemp anotherpokestop." + AnotherPokeStop.getUsedPokestop().get(playerMP.getUniqueID()).toString() + ".cooldown true " + _config.cooldown + "h");
 
                             }
