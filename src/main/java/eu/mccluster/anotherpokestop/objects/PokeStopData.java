@@ -22,18 +22,21 @@ public class PokeStopData extends Config {
     private double posY;
     @Order(6)
     private double posZ;
+    @Order(7)
+    private LoottableStorage loottable = new LoottableStorage();
 
     public PokeStopData() {
 
     }
 
-    public PokeStopData(UUID pokeStopUniqueId, RGBStorage color, World world, double posX, double posY, double posZ) {
+    public PokeStopData(UUID pokeStopUniqueId, RGBStorage color, World world, double posX, double posY, double posZ, LoottableStorage loottable) {
         this.pokeStopUniqueId = pokeStopUniqueId.toString();
         this.color = color;
         this.world = world.getWorldInfo().getWorldName();
         this.posX = posX;
         this.posY = posY;
         this.posZ = posZ;
+        this.loottable = loottable;
     }
 
     public UUID getPokeStopUniqueId() { return UUID.fromString(this.pokeStopUniqueId); }
@@ -55,6 +58,8 @@ public class PokeStopData extends Config {
     public double getPosZ() {
         return this.posZ;
     }
+
+    public LoottableStorage getLoottable() { return this.loottable; }
 
 
     @Override

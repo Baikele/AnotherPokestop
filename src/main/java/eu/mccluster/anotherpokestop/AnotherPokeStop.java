@@ -2,15 +2,13 @@ package eu.mccluster.anotherpokestop;
 
 import com.pixelmonmod.pixelmon.Pixelmon;
 import eu.mccluster.anotherpokestop.Listener.*;
-import eu.mccluster.anotherpokestop.commands.Apsreload;
-import eu.mccluster.anotherpokestop.commands.RemovePokeStop;
-import eu.mccluster.anotherpokestop.commands.SetPokeStop;
-import eu.mccluster.anotherpokestop.commands.SetPokeStopDummy;
+import eu.mccluster.anotherpokestop.commands.*;
 import eu.mccluster.anotherpokestop.commands.elements.RGBElement;
 import eu.mccluster.anotherpokestop.config.AnotherPokeStopMainConfig;
 import eu.mccluster.anotherpokestop.config.PokeStopRegistry;
 import eu.mccluster.anotherpokestop.config.loottables.LootTableStart;
 import eu.mccluster.anotherpokestop.config.trainerConfig.TrainerBaseConfig;
+import eu.mccluster.anotherpokestop.commands.elements.LoottableElement;
 import eu.mccluster.anotherpokestop.objects.PokeStopData;
 import eu.mccluster.anotherpokestop.objects.TrainerObject;
 import eu.mccluster.anotherpokestop.utils.Utils;
@@ -52,10 +50,21 @@ public class AnotherPokeStop {
     private static ConcurrentHashMap<EntityPlayerMP, TrainerObject> _currentBattles = new ConcurrentHashMap<>();
 
     @Getter
+    private static ConcurrentHashMap<EntityPlayerMP, String> _pokestopLoot = new ConcurrentHashMap<>();
+
+    @Getter
     private static ConcurrentHashMap<UUID, UUID> _usedPokestop = new ConcurrentHashMap<>();
 
+    @Getter
+    private final String _lootFolder = AnotherPokeStopPlugin.getInstance().getDataFolder() + File.separator + "loottables" + File.separator;
 
     public List<UUID> _currentPokestopRemovers = new ArrayList<>();
+
+    public List<String> _avaiableLoottables = new ArrayList<>();
+
+    public List<UUID> _currentEditors = new ArrayList<>();
+
+
 
     @Getter
     private static AnotherPokeStop _instance;
@@ -72,7 +81,7 @@ public class AnotherPokeStop {
 
     private void onEnable(){
         _config = new AnotherPokeStopMainConfig(new File(AnotherPokeStopPlugin.getInstance().getDataFolder(), "AnotherPokeStop.conf"));
-        _lootConfig = new LootTableStart(new File(AnotherPokeStopPlugin.getInstance().getDataFolder(), "Loottable.conf"));
+        _lootConfig = new LootTableStart(new File(_lootFolder, "DefaultLootConfig.conf"));
         _registry = new PokeStopRegistry(new File(AnotherPokeStopPlugin.getInstance().getDataFolder(), "PokestopRegistry.conf"));
         _trainer = new TrainerBaseConfig(new File(AnotherPokeStopPlugin.getInstance().getDataFolder(), "RocketTrainer.conf"));
         _registry.load();
@@ -82,11 +91,12 @@ public class AnotherPokeStop {
         registerListeners();
         registerCommands();
         populatePokeStopHashMap();
+        loadLoottables();
     }
 
     public void onReload() {
         _config.load();
-        _lootConfig.load();
+        loadLoottables();
         _trainer.load();
     }
 
@@ -96,7 +106,9 @@ public class AnotherPokeStop {
                 .executor(new SetPokeStop(_config.config))
                 .permission("anotherpokestop.set")
                 .description(Utils.toText("&6Create a new Pokestop"))
-                .arguments(GenericArguments.optional(new RGBElement(Text.of("rgb"))))
+                .arguments(
+                        GenericArguments.optionalWeak(new RGBElement(Text.of("rgb"))),
+                        GenericArguments.optional(new LoottableElement(Text.of("loottable"))))
                 .build();
         Sponge.getCommandManager().register(AnotherPokeStopPlugin.getInstance(), setPokeStop, "setpokestop");
 
@@ -136,6 +148,19 @@ public class AnotherPokeStop {
         Pixelmon.EVENT_BUS.register(new BattleStartListener(this));
     }
 
+    private void loadLoottables() {
+        File[] files = new File(_lootFolder).listFiles();
+
+        if (files == null) {
+            System.out.println("No Loottables found, skipping loading");
+            return;
+        }
+        for (File file : files) {
+            if (file.isFile() && file.getName().endsWith(".conf")) {
+                _avaiableLoottables.add(file.getName().replace(".conf", ""));
+            }
+        }
+    }
     private void populatePokeStopHashMap() {
         _registry.registryList.forEach(pokeStopData -> _registeredPokeStops.put(pokeStopData.getPokeStopUniqueId(), pokeStopData));
     }

@@ -18,9 +18,6 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.world.World;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -38,12 +35,13 @@ public class TrainerObject {
     @Getter
     private TrainerBaseConfig _config;
 
-    public TrainerObject(EntityPlayerMP player, TrainerBaseConfig trainerBaseConfig) {
+    public TrainerObject(EntityPlayerMP player, TrainerBaseConfig trainerBaseConfig, String lootTable) {
         if(trainerBaseConfig == null) {
             return;
         }
         this._player = player;
         AnotherPokeStop.getInstance().getCurrentBattles().put(player, this);
+        AnotherPokeStop.getPokestopLoot().put(player, lootTable);
         this._trainer = new NPCTrainer(this._player.world);
         _config = trainerBaseConfig;
         setTrainerInfo(trainerBaseConfig);

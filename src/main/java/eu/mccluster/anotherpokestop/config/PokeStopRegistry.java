@@ -2,6 +2,7 @@ package eu.mccluster.anotherpokestop.config;
 
 import eu.mccluster.anotherpokestop.objects.PokeStopData;
 import eu.mccluster.dependency.configmanager.api.Config;
+import eu.mccluster.dependency.configmanager.api.annotations.Comment;
 import eu.mccluster.dependency.configmanager.api.annotations.Order;
 import eu.mccluster.dependency.configmanager.api.annotations.Skip;
 
@@ -18,6 +19,7 @@ public class PokeStopRegistry extends Config {
     }
 
     @Order(1)
+    @Comment("Don't change this by hand on any case or else your Pokestops will be broke!")
     public List<PokeStopData> registryList = new ArrayList<>();
 
     @Override

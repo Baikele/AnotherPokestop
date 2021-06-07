@@ -67,18 +67,20 @@ public class InteractEntityListener {
 
         if(AnotherPokeStop.getRegisteredPokeStops().containsKey(pokeStopId) && !(p.hasPermission("anotherpokestop." + pokeStopId.toString() + ".cooldown"))) {
             AnotherPokeStop.getUsedPokestop().put(p.getUniqueId(), pokeStopId);
+            String lootTable = AnotherPokeStop.getRegisteredPokeStops().get(pokeStopId).getLoottable().getLoottable();
+            System.out.println(lootTable);
 
             if(_config.rocketSettings.rocketEvent) {
                 int rocketEvent = _config.rocketSettings.rocketChance;
                 int rocketRoll = (int) (100 * Math.random());
                 if (rocketEvent >= rocketRoll) {
-                    RocketUtils.genRocketDialogue(pokeStopId, p)
+                    RocketUtils.genRocketDialogue(pokeStopId, p, lootTable)
                             .open((EntityPlayerMP) p);
                     return;
                 }
             }
 
-                List<ItemStack> lootList = Utils.listToNative(Utils.genPokeStopLoot(false));
+                List<ItemStack> lootList = Utils.listToNative(Utils.genPokeStopLoot(false, lootTable));
                 AnotherPokeStop.getCurrentDrops().put(p.getUniqueId(), lootList);
                 Utils.dropScreen(_config.menuTexts.header, _config.menuTexts.buttonText, (EntityPlayerMP) p, lootList);
                 Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "lp user " + p.getName() + " permission settemp anotherpokestop." + pokeStopId.toString() + ".cooldown true " + _config.cooldown + "h");

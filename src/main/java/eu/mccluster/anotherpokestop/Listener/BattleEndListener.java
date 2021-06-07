@@ -6,7 +6,6 @@ import com.pixelmonmod.pixelmon.enums.battle.EnumBattleEndCause;
 import com.pixelmonmod.pixelmon.storage.TrainerPartyStorage;
 import eu.mccluster.anotherpokestop.AnotherPokeStop;
 import eu.mccluster.anotherpokestop.config.AnotherPokeStopConfig;
-import eu.mccluster.anotherpokestop.objects.TrainerObject;
 import eu.mccluster.anotherpokestop.utils.Utils;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -36,7 +35,7 @@ public class BattleEndListener {
                     event.results.forEach(((battleParticipant, battleResults) -> {
                         if(battleParticipant.getEntity() instanceof EntityPlayerMP) {
                             if(battleResults == BattleResults.VICTORY) {
-                                List<ItemStack> lootList = Utils.listToNative(Utils.genPokeStopLoot(true));
+                                List<ItemStack> lootList = Utils.listToNative(Utils.genPokeStopLoot(true, AnotherPokeStop.getPokestopLoot().get(playerMP)));
                                 AnotherPokeStop.getCurrentDrops().put(playerMP.getUniqueID(), lootList);
                                 Utils.dropScreen(_config.menuTexts.header, _config.menuTexts.buttonText, playerMP, lootList);
                                 Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "lp user " + playerMP.getName() + " permission settemp anotherpokestop." + AnotherPokeStop.getUsedPokestop().get(playerMP.getUniqueID()).toString() + ".cooldown true " + _config.cooldown + "h");
@@ -50,6 +49,7 @@ public class BattleEndListener {
                 }
                 despawnNPC(event);
                 _instance.getCurrentBattles().remove(playerMP, trainer);
+                AnotherPokeStop.getPokestopLoot().remove(playerMP);
             }
         });
     }

@@ -5,9 +5,10 @@ import com.pixelmonmod.pixelmon.api.enums.EnumPositionTriState;
 import eu.mccluster.anotherpokestop.AnotherPokeStop;
 import eu.mccluster.anotherpokestop.AnotherPokeStopPlugin;
 import eu.mccluster.anotherpokestop.config.loottables.LootTableConfig;
+import eu.mccluster.anotherpokestop.config.loottables.LootTableStart;
+import eu.mccluster.anotherpokestop.config.loottables.RocketTableData;
 import eu.mccluster.anotherpokestop.config.trainerConfig.TrainerBaseConfig;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.text.TextComponentString;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.item.ItemType;
@@ -59,43 +60,55 @@ public class Utils {
         return spongeStacks.stream().map(ItemStackUtil::toNative).collect(Collectors.toList());
     }
 
-    public static List<ItemStack> genPokeStopLoot(Boolean rocket) {
-        LootTableConfig _loottable = AnotherPokeStop.getLootConfig().loottable;
+    public static LootTableStart getLoottable(String lootTable) {
+        if(AnotherPokeStop.getInstance()._avaiableLoottables.contains(lootTable)) {
+                LootTableStart lootData = new LootTableStart(new File(AnotherPokeStop.getInstance().getLootFolder(), lootTable + ".conf"));
+                lootData.load();
+                return lootData;
+        }
+        return null;
+    }
+
+    public static List<ItemStack> genPokeStopLoot(Boolean rocket, String lootTable) {
+
         int raritySum;
-        List<ItemStack> outList = new ArrayList<>();
+        List<ItemStack> outList = new ArrayList<>();;
+        LootTableStart _loottable = Utils.getLoottable(lootTable);
+
         if(!rocket) {
-            raritySum = _loottable.lootData.stream().mapToInt(lootTableData -> lootTableData.lootRarity).sum();
+            raritySum = _loottable.loottable.lootData.stream().mapToInt(lootTableData -> lootTableData.lootRarity).sum();
             for (int i = 0; i < AnotherPokeStop.getConfig().config.lootAmount; i++) {
                 int pickedRarity = (int) (raritySum * Math.random());
                 int listEntry = -1;
 
                 for (int b = 0; b <= pickedRarity; ) {
                     listEntry = listEntry + 1;
-                    b = _loottable.lootData.get(listEntry).lootRarity + b;
+                    b = _loottable.loottable.lootData.get(listEntry).lootRarity + b;
 
                 }
-                ItemStack rewardItem = Utils.itemStackFromType(Sponge.getRegistry().getType(ItemType.class, _loottable.lootData.get(listEntry).lootItem).get(), _loottable.lootData.get(listEntry).lootAmount);
+                ItemStack rewardItem = Utils.itemStackFromType(Sponge.getRegistry().getType(ItemType.class, _loottable.loottable.lootData.get(listEntry).lootItem).get(), _loottable.loottable.lootData.get(listEntry).lootAmount);
                 outList.add(rewardItem);
             }
             return outList;
         } else {
-            raritySum = _loottable.rocketData.stream().mapToInt(RocketTableData -> RocketTableData.lootRarity).sum();
+            raritySum = _loottable.loottable.rocketData.stream().mapToInt(RocketTableData -> RocketTableData.lootRarity).sum();
             for (int i = 0; i < AnotherPokeStop.getConfig().config.rocketSettings.rocketAmount; i++) {
                 int pickedRarity = (int) (raritySum * Math.random());
                 int listEntry = -1;
 
                 for (int b = 0; b <= pickedRarity; ) {
                     listEntry = listEntry + 1;
-                    b = _loottable.rocketData.get(listEntry).lootRarity + b;
+                    b = _loottable.loottable.rocketData.get(listEntry).lootRarity + b;
 
                 }
-                ItemStack rewardItem = Utils.itemStackFromType(Sponge.getRegistry().getType(ItemType.class, _loottable.rocketData.get(listEntry).lootItem).get(), _loottable.rocketData.get(listEntry).lootAmount);
+                ItemStack rewardItem = Utils.itemStackFromType(Sponge.getRegistry().getType(ItemType.class, _loottable.loottable.rocketData.get(listEntry).lootItem).get(), _loottable.loottable.rocketData.get(listEntry).lootAmount);
                 outList.add(rewardItem);
             }
             return outList;
 
         }
         }
+
     }
 
 

@@ -21,5 +21,8 @@ public class PlayerLeftListener {
             _plugin.getCurrentBattles().get(player).getTrainer().setDead();
             _plugin.getCurrentBattles().remove((EntityPlayerMP) event.getTargetEntity());
         }
+        if(AnotherPokeStop.getPokestopLoot().containsKey(player)) {
+            AnotherPokeStop.getPokestopLoot().remove((EntityPlayerMP) event.getTargetEntity());
+        }
     }
 }

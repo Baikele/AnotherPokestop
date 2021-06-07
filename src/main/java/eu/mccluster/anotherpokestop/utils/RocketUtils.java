@@ -16,12 +16,12 @@ import java.util.UUID;
 
 public class RocketUtils {
 
-    public static Dialogue genRocketDialogue(UUID uuid, Player p) {
+    public static Dialogue genRocketDialogue(UUID uuid, Player p, String lootTable) {
         AnotherPokeStopConfig _config = AnotherPokeStop.getConfig().config;
         ArrayList<Choice> choices = new ArrayList<>();
-        Choice choice = genRocketReactions(_config.rocketSettings.choiceYes, p, uuid);
+        Choice choice = genRocketReactions(_config.rocketSettings.choiceYes, p, uuid, lootTable);
         choices.add(choice);
-        choice = genRocketReactions(_config.rocketSettings.choiceNo, p, uuid);
+        choice = genRocketReactions(_config.rocketSettings.choiceNo, p, uuid, lootTable);
         choices.add(choice);
         return Dialogue.builder()
                 .setText(_config.rocketSettings.dialogueText)
@@ -30,7 +30,7 @@ public class RocketUtils {
     }
 
 
-    public static Choice genRocketReactions(String text, Player p, UUID uuid) {
+    public static Choice genRocketReactions(String text, Player p, UUID uuid, String lootTable) {
         AnotherPokeStopConfig _config = AnotherPokeStop.getConfig().config;
         return Choice.builder()
                 .setText(text)
@@ -38,11 +38,11 @@ public class RocketUtils {
                     if (text == _config.rocketSettings.choiceYes) {
 
                         TrainerBaseConfig rocketTrainer = Utils.getTrainerByName("RocketTrainer");
-                        TrainerObject trainerObject = new TrainerObject(e.player, rocketTrainer);
+                        TrainerObject trainerObject = new TrainerObject(e.player, rocketTrainer, lootTable);
 
                     } else if(text == _config.rocketSettings.choiceNo) {
 
-                        List<ItemStack> lootList = Utils.listToNative(Utils.genPokeStopLoot(false));
+                        List<ItemStack> lootList = Utils.listToNative(Utils.genPokeStopLoot(false, lootTable));
                         AnotherPokeStop.getCurrentDrops().put(p.getUniqueId(), lootList);
                         Utils.dropScreen(_config.menuTexts.header, _config.menuTexts.buttonText, (EntityPlayerMP) p, lootList);
                         Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "lp user " + p.getName() + " permission settemp anotherpokestop." + uuid.toString() + ".cooldown true " + _config.cooldown + "h");

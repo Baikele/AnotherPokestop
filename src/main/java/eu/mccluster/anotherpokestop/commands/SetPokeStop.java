@@ -3,7 +3,10 @@ package eu.mccluster.anotherpokestop.commands;
 import com.flowpowered.math.vector.Vector3d;
 import com.pixelmonmod.pixelmon.entities.EntityPokestop;
 import eu.mccluster.anotherpokestop.AnotherPokeStop;
+import eu.mccluster.anotherpokestop.commands.elements.LoottableElement;
 import eu.mccluster.anotherpokestop.config.AnotherPokeStopConfig;
+import eu.mccluster.anotherpokestop.config.loottables.LootTableConfig;
+import eu.mccluster.anotherpokestop.objects.LoottableStorage;
 import eu.mccluster.anotherpokestop.objects.PokeStopData;
 import eu.mccluster.anotherpokestop.objects.RGBStorage;
 import eu.mccluster.anotherpokestop.utils.Utils;
@@ -31,8 +34,11 @@ public class SetPokeStop implements CommandExecutor {
             return CommandResult.empty();
         }
 
-        Optional<RGBStorage> rgbStorageOptional = args.<RGBStorage>getOne("rgb");
+        Optional<RGBStorage> rgbStorageOptional = args.getOne("rgb");
         RGBStorage rgbStorage = rgbStorageOptional.orElseGet(() -> new RGBStorage(_config.standardColors.red, _config.standardColors.green, _config.standardColors.blue));
+
+        Optional<LoottableStorage> loottableStorageOptional = args.getOne("loottable");
+        LoottableStorage loottableStorage = loottableStorageOptional.orElseGet(() -> new LoottableStorage("DefaultLootConfig"));
 
         Player p = (Player) src;
         Vector3d playerPos = p.getPosition();
@@ -45,7 +51,7 @@ public class SetPokeStop implements CommandExecutor {
         playerWorld.spawnEntity(pokestop);
         p.sendMessage(Utils.toText(_config.setText));
 
-        PokeStopData newPokeStopData = new PokeStopData(pokestop.getUniqueID(), rgbStorage, playerWorld, playerPos.getX(), playerPos.getY(), playerPos.getZ());
+        PokeStopData newPokeStopData = new PokeStopData(pokestop.getUniqueID(), rgbStorage, playerWorld, playerPos.getX(), playerPos.getY(), playerPos.getZ(), loottableStorage);
         AnotherPokeStop.getRegisteredPokeStops().put(pokestop.getUniqueID(), newPokeStopData);
         AnotherPokeStop.getRegistry().registryList.add(newPokeStopData);
         AnotherPokeStop.getInstance().saveRegistry();
