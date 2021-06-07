@@ -13,8 +13,8 @@ public class AnotherPokeStopDropMenuConfig extends Config {
     public String header = "Pokestop-Drops";
 
     @Order(2)
-    @Comment("Button of the DropMenu.")
-    public String buttonText = "Schliessen";
+    @Comment("Close Button of the DropMenu.")
+    public String buttonText = "Close";
 
     @Override
     public File getFile() {

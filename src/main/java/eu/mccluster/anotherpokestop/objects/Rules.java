@@ -25,7 +25,6 @@ public class Rules extends BattleRules {
     {
         this.rules = new BattleRules();
         this.clauses = new ArrayList<>();
-
         this.levelCap = config.levelCap;
 
         //Set BattleType
@@ -42,7 +41,7 @@ public class Rules extends BattleRules {
         this.teamSelectTime = config.teamSelectTime;
         this.teamPreview = config.teamPreview;
         this.getRules().teamPreview = config.teamPreview;
-        this.fullHeal = config.fullheal;
+        this.getRules().fullHeal = config.fullheal;
 
         //Insert default battle clauses
         config.clauses.forEach(this::addClause);
