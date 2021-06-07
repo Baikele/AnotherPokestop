@@ -12,3 +12,5 @@ Permissions:
 - anotherpokestop.setdummy
 - anotherpokestop.reload
 - anotherpokestop.claimpokestop
+
+Discord Link: https://discord.gg/hpcYj6yFAW
