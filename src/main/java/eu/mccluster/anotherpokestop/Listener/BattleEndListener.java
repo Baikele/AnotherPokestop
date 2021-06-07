@@ -2,7 +2,6 @@ package eu.mccluster.anotherpokestop.Listener;
 
 import com.pixelmonmod.pixelmon.api.events.battles.BattleEndEvent;
 import com.pixelmonmod.pixelmon.enums.battle.BattleResults;
-import com.pixelmonmod.pixelmon.enums.battle.EnumBattleEndCause;
 import com.pixelmonmod.pixelmon.storage.TrainerPartyStorage;
 import eu.mccluster.anotherpokestop.AnotherPokeStop;
 import eu.mccluster.anotherpokestop.config.AnotherPokeStopConfig;
@@ -11,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import org.spongepowered.api.Sponge;
 
 import java.util.List;
 

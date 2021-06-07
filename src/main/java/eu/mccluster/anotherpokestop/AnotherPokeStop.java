@@ -5,7 +5,6 @@ import eu.mccluster.anotherpokestop.Listener.*;
 import eu.mccluster.anotherpokestop.commands.*;
 import eu.mccluster.anotherpokestop.commands.elements.RGBElement;
 import eu.mccluster.anotherpokestop.config.AnotherPokeStopMainConfig;
-import eu.mccluster.anotherpokestop.config.PlayerData;
 import eu.mccluster.anotherpokestop.config.PokeStopRegistry;
 import eu.mccluster.anotherpokestop.config.loottables.LootTableStart;
 import eu.mccluster.anotherpokestop.config.trainerConfig.TrainerBaseConfig;

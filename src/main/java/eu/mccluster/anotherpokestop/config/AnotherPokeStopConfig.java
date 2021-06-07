@@ -3,6 +3,7 @@ package eu.mccluster.anotherpokestop.config;
 import eu.mccluster.dependency.configmanager.api.Config;
 import eu.mccluster.dependency.configmanager.api.annotations.Comment;
 import eu.mccluster.dependency.configmanager.api.annotations.Order;
+import org.checkerframework.checker.units.qual.C;
 
 import java.io.File;
 
@@ -40,7 +41,6 @@ public class AnotherPokeStopConfig extends Config {
     @Comment("Message when player disabls the remove mode. Use & for Formatting Codes")
     public String disableRemover = "Disabled remove mode";
 
-
     @Order(9)
     public AnotherPokeStopColorConfig standardColors = new AnotherPokeStopColorConfig();
 
@@ -49,6 +49,10 @@ public class AnotherPokeStopConfig extends Config {
 
     @Order(11)
     public RocketConfig rocketSettings = new RocketConfig();
+
+    @Order(12)
+    @Comment("Message when a player lacks of the claim permission. Use & for Formatting Codes")
+    public String noClaimPermission = "You don't have permission to claim Pokestops!";
 
     @Override
     public File getFile() {

@@ -8,7 +8,6 @@ import eu.mccluster.anotherpokestop.config.trainerConfig.TrainerBaseConfig;
 import eu.mccluster.anotherpokestop.objects.TrainerObject;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import java.util.ArrayList;
 import java.util.List;

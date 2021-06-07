@@ -10,7 +10,6 @@ import eu.mccluster.anotherpokestop.utils.Utils;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.entity.InteractEntityEvent;
@@ -39,18 +38,18 @@ public class InteractEntityListener {
             return;
         }
 
-        if(!(event.getSource() instanceof Player)) {
+        if (!(event.getSource() instanceof Player)) {
             return;
         }
         Player p = (Player) event.getSource();
         UUID pokeStopId = ((EntityPokestop) event.getTargetEntity()).getUniqueID();
 
 
-        if(_plugin._currentPokestopRemovers.contains(p.getUniqueId()) && AnotherPokeStop.getRegisteredPokeStops().containsKey(pokeStopId)) {
+        if (_plugin._currentPokestopRemovers.contains(p.getUniqueId()) && AnotherPokeStop.getRegisteredPokeStops().containsKey(pokeStopId)) {
 
-            for(int i = 0; i < _registry.registryList.size(); i++) {
+            for (int i = 0; i < _registry.registryList.size(); i++) {
                 UUID registeredUUID = _registry.registryList.get(i).getPokeStopUniqueId();
-                if(registeredUUID.equals(pokeStopId)) {
+                if (registeredUUID.equals(pokeStopId)) {
                     _registry.registryList.remove(i);
                     AnotherPokeStop.getInstance().saveRegistry();
                     break;
@@ -60,34 +59,38 @@ public class InteractEntityListener {
             event.getTargetEntity().remove();
             p.sendMessage(Utils.toText(_config.removeText));
             return;
-        } else if(_plugin._currentPokestopRemovers.contains(p.getUniqueId())) {
+        } else if (_plugin._currentPokestopRemovers.contains(p.getUniqueId())) {
             event.getTargetEntity().remove();
             return;
         }
 
-        boolean cooldown = Utils.claimable(p, pokeStopId);
-        if(AnotherPokeStop.getRegisteredPokeStops().containsKey(pokeStopId) && cooldown) {
-            AnotherPokeStop.getUsedPokestop().put(p.getUniqueId(), pokeStopId);
-            String lootTable = AnotherPokeStop.getRegisteredPokeStops().get(pokeStopId).getLoottable().getLoottable();
+        if (p.hasPermission("anotherpokestop.claimpokestop")) {
+            boolean cooldown = Utils.claimable(p, pokeStopId);
+            if (AnotherPokeStop.getRegisteredPokeStops().containsKey(pokeStopId) && cooldown) {
+                AnotherPokeStop.getUsedPokestop().put(p.getUniqueId(), pokeStopId);
+                String lootTable = AnotherPokeStop.getRegisteredPokeStops().get(pokeStopId).getLoottable().getLoottable();
 
-            if(_config.rocketSettings.rocketEvent) {
-                int rocketEvent = _config.rocketSettings.rocketChance;
-                int rocketRoll = (int) (100 * Math.random());
-                if (rocketEvent >= rocketRoll) {
-                    RocketUtils.genRocketDialogue(pokeStopId, p, lootTable)
-                            .open((EntityPlayerMP) p);
-                    return;
+                if (_config.rocketSettings.rocketEvent) {
+                    int rocketEvent = _config.rocketSettings.rocketChance;
+                    int rocketRoll = (int) (100 * Math.random());
+                    if (rocketEvent >= rocketRoll) {
+                        RocketUtils.genRocketDialogue(pokeStopId, p, lootTable)
+                                .open((EntityPlayerMP) p);
+                        return;
+                    }
                 }
-            }
 
                 List<ItemStack> lootList = Utils.listToNative(Utils.genPokeStopLoot(false, lootTable));
                 AnotherPokeStop.getCurrentDrops().put(p.getUniqueId(), lootList);
                 Utils.dropScreen(_config.menuTexts.header, _config.menuTexts.buttonText, (EntityPlayerMP) p, lootList);
 
-        } else if(AnotherPokeStop.getRegisteredPokeStops().containsKey(pokeStopId)) {
+            } else if (AnotherPokeStop.getRegisteredPokeStops().containsKey(pokeStopId)) {
                 p.sendMessage(Utils.toText(_config.cooldownText));
             }
+        } else {
+            p.sendMessage(Utils.toText(_config.noClaimPermission));
         }
+    }
 
     @SubscribeEvent
     public void onDropClick(CustomDropsEvent.ClickDrop event) {

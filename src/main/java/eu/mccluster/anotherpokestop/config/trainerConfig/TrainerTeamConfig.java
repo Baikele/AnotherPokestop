@@ -14,6 +14,7 @@ public class TrainerTeamConfig extends Config {
 
     public TrainerTeamConfig() {
         trainerParty.add(new TrainerPokemonConfig());
+        trainerParty.add(new TrainerPokemonConfig());
     }
 
     @Override

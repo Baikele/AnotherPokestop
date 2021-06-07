@@ -10,7 +10,7 @@ public class AnotherPokeStopColorConfig extends Config {
 
     @Order(1)
     @Comment("Min 0 | Max 255")
-    public int red = 226;
+    public int red = 63;
 
     @Order(2)
     @Comment("Min 0 | Max 255")
@@ -18,7 +18,7 @@ public class AnotherPokeStopColorConfig extends Config {
 
     @Order(3)
     @Comment("Min 0 | Max 255")
-    public int blue = 116;
+    public int blue = 255;
 
     @Override
     public File getFile() {
