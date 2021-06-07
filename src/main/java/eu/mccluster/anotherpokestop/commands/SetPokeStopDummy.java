@@ -25,7 +25,7 @@ public class SetPokeStopDummy implements CommandExecutor {
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         if (!(src instanceof Player)) {
-            src.sendMessage(Text.of("Hello GlaDOS, get a ingame Player!"));
+            src.sendMessage(Text.of("[AnotherPokeStop] Hello GlaDOS, get a ingame Player!"));
             return CommandResult.empty();
         }
 

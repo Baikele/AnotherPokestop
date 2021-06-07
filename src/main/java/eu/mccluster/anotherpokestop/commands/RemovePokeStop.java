@@ -21,7 +21,7 @@ public class RemovePokeStop implements CommandExecutor {
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         if (!(src instanceof Player)) {
-            src.sendMessage(Text.of("Hello GlaDOS, you´re not a Player!"));
+            src.sendMessage(Text.of("[AnotherPokeStop] Hello GlaDOS, you´re not a Player!"));
             return CommandResult.empty();
         }
         Player p = (Player) src;

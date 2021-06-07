@@ -4,13 +4,14 @@ import com.pixelmonmod.pixelmon.api.drops.CustomDropScreen;
 import com.pixelmonmod.pixelmon.api.enums.EnumPositionTriState;
 import eu.mccluster.anotherpokestop.AnotherPokeStop;
 import eu.mccluster.anotherpokestop.AnotherPokeStopPlugin;
-import eu.mccluster.anotherpokestop.config.loottables.LootTableConfig;
+import eu.mccluster.anotherpokestop.config.PlayerData;
 import eu.mccluster.anotherpokestop.config.loottables.LootTableStart;
-import eu.mccluster.anotherpokestop.config.loottables.RocketTableData;
 import eu.mccluster.anotherpokestop.config.trainerConfig.TrainerBaseConfig;
+import eu.mccluster.anotherpokestop.objects.PlayerCooldowns;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.text.TextComponentString;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
@@ -19,7 +20,10 @@ import org.spongepowered.common.item.inventory.util.ItemStackUtil;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class Utils {
@@ -60,6 +64,54 @@ public class Utils {
         return spongeStacks.stream().map(ItemStackUtil::toNative).collect(Collectors.toList());
     }
 
+    public static boolean claimable(Player player, UUID pokestopID) {
+
+        String playerID = player.getUniqueId().toString();
+        Date time = new Date();
+
+        if(!AnotherPokeStop.getInstance()._playerData.contains(playerID)) {
+            PlayerCooldowns playerCooldowns = new PlayerCooldowns(pokestopID, time);
+            PlayerData newplayerData = new PlayerData(new File(AnotherPokeStop.getInstance().getPlayerFolder(), playerID + ".conf"));
+            newplayerData.load();
+            AnotherPokeStop.getInstance()._playerData.add(newplayerData.getFile().getName().replace(".conf", ""));
+            newplayerData.playerCooldowns.add(playerCooldowns);
+            newplayerData.save();
+            return true;
+        }
+
+        PlayerData playerData = new PlayerData(new File(AnotherPokeStop.getInstance().getPlayerFolder(), playerID + ".conf"));
+        playerData.load();
+
+        if(AnotherPokeStop.getInstance()._playerData.contains(playerID)) {
+
+            int entrySum = playerData.playerCooldowns.size();
+            int index = 0;
+            PlayerCooldowns playerCooldowns = new PlayerCooldowns(pokestopID, time);
+            for(int i = 0; i < entrySum; i++) {
+                if (playerData.playerCooldowns.get(index).getPokestopID().equals(playerCooldowns.getPokestopID())) {
+                    break;
+                }
+                index = index + 1;
+                if(index >= entrySum) {
+                    playerData.playerCooldowns.add(playerCooldowns);
+                    playerData.save();
+                    return true;
+                }
+            }
+
+              long lastVisit = playerData.playerCooldowns.get(index).getDate().getTime();
+              long remainingTime = time.getTime() - lastVisit;
+
+              if(TimeUnit.MILLISECONDS.toMinutes(remainingTime) < (AnotherPokeStop.getConfig().config.cooldown * 60L)) {
+                  return false;
+              }
+
+            playerData.playerCooldowns.set(index, playerCooldowns);
+            playerData.save();
+        }
+        return true;
+    }
+
     public static LootTableStart getLoottable(String lootTable) {
         if(AnotherPokeStop.getInstance()._avaiableLoottables.contains(lootTable)) {
                 LootTableStart lootData = new LootTableStart(new File(AnotherPokeStop.getInstance().getLootFolder(), lootTable + ".conf"));
@@ -89,7 +141,6 @@ public class Utils {
                 ItemStack rewardItem = Utils.itemStackFromType(Sponge.getRegistry().getType(ItemType.class, _loottable.loottable.lootData.get(listEntry).lootItem).get(), _loottable.loottable.lootData.get(listEntry).lootAmount);
                 outList.add(rewardItem);
             }
-            return outList;
         } else {
             raritySum = _loottable.loottable.rocketData.stream().mapToInt(RocketTableData -> RocketTableData.lootRarity).sum();
             for (int i = 0; i < AnotherPokeStop.getConfig().config.rocketSettings.rocketAmount; i++) {
@@ -104,10 +155,10 @@ public class Utils {
                 ItemStack rewardItem = Utils.itemStackFromType(Sponge.getRegistry().getType(ItemType.class, _loottable.loottable.rocketData.get(listEntry).lootItem).get(), _loottable.loottable.rocketData.get(listEntry).lootAmount);
                 outList.add(rewardItem);
             }
-            return outList;
 
         }
-        }
+        return outList;
+    }
 
     }
 

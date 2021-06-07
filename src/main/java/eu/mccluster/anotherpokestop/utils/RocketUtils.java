@@ -45,8 +45,6 @@ public class RocketUtils {
                         List<ItemStack> lootList = Utils.listToNative(Utils.genPokeStopLoot(false, lootTable));
                         AnotherPokeStop.getCurrentDrops().put(p.getUniqueId(), lootList);
                         Utils.dropScreen(_config.menuTexts.header, _config.menuTexts.buttonText, (EntityPlayerMP) p, lootList);
-                        Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "lp user " + p.getName() + " permission settemp anotherpokestop." + uuid.toString() + ".cooldown true " + _config.cooldown + "h");
-
                     }
                 })
                 .build();

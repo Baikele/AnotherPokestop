@@ -5,6 +5,7 @@ import eu.mccluster.anotherpokestop.Listener.*;
 import eu.mccluster.anotherpokestop.commands.*;
 import eu.mccluster.anotherpokestop.commands.elements.RGBElement;
 import eu.mccluster.anotherpokestop.config.AnotherPokeStopMainConfig;
+import eu.mccluster.anotherpokestop.config.PlayerData;
 import eu.mccluster.anotherpokestop.config.PokeStopRegistry;
 import eu.mccluster.anotherpokestop.config.loottables.LootTableStart;
 import eu.mccluster.anotherpokestop.config.trainerConfig.TrainerBaseConfig;
@@ -58,13 +59,14 @@ public class AnotherPokeStop {
     @Getter
     private final String _lootFolder = AnotherPokeStopPlugin.getInstance().getDataFolder() + File.separator + "loottables" + File.separator;
 
+    @Getter
+    private final String _playerFolder = AnotherPokeStopPlugin.getInstance().getDataFolder() + File.separator + "playerdata" + File.separator;
+
     public List<UUID> _currentPokestopRemovers = new ArrayList<>();
 
     public List<String> _avaiableLoottables = new ArrayList<>();
 
-    public List<UUID> _currentEditors = new ArrayList<>();
-
-
+    public List<String> _playerData = new ArrayList<>();
 
     @Getter
     private static AnotherPokeStop _instance;
@@ -79,7 +81,7 @@ public class AnotherPokeStop {
         _instance.onEnable();
     }
 
-    private void onEnable(){
+    private void onEnable() {
         _config = new AnotherPokeStopMainConfig(new File(AnotherPokeStopPlugin.getInstance().getDataFolder(), "AnotherPokeStop.conf"));
         _lootConfig = new LootTableStart(new File(_lootFolder, "DefaultLootConfig.conf"));
         _registry = new PokeStopRegistry(new File(AnotherPokeStopPlugin.getInstance().getDataFolder(), "PokestopRegistry.conf"));
@@ -88,6 +90,7 @@ public class AnotherPokeStop {
         _lootConfig.load();
         _config.load();
         _trainer.load();
+        loadPlayers();
         registerListeners();
         registerCommands();
         populatePokeStopHashMap();
@@ -161,6 +164,21 @@ public class AnotherPokeStop {
             }
         }
     }
+
+    private void loadPlayers() {
+        File[] files = new File(_playerFolder).listFiles();
+
+        if (files == null) {
+            System.out.println("No Playerdata found, skipping loading");
+            return;
+        }
+        for (File file : files) {
+            if (file.isFile() && file.getName().endsWith(".conf")) {
+                _playerData.add(file.getName().replace(".conf", ""));
+            }
+        }
+    }
+
     private void populatePokeStopHashMap() {
         _registry.registryList.forEach(pokeStopData -> _registeredPokeStops.put(pokeStopData.getPokeStopUniqueId(), pokeStopData));
     }
