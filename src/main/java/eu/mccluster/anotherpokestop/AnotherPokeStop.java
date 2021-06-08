@@ -65,8 +65,6 @@ public class AnotherPokeStop {
 
     public List<String> _avaiableLoottables = new ArrayList<>();
 
-    public List<String> _playerData = new ArrayList<>();
-
     @Getter
     private static AnotherPokeStop _instance;
 
@@ -89,7 +87,6 @@ public class AnotherPokeStop {
         _lootConfig.load();
         _config.load();
         _trainer.load();
-        loadPlayers();
         registerListeners();
         registerCommands();
         populatePokeStopHashMap();
@@ -164,19 +161,6 @@ public class AnotherPokeStop {
         }
     }
 
-    private void loadPlayers() {
-        File[] files = new File(_playerFolder).listFiles();
-
-        if (files == null) {
-            System.out.println("No Playerdata found, skipping loading");
-            return;
-        }
-        for (File file : files) {
-            if (file.isFile() && file.getName().endsWith(".conf")) {
-                _playerData.add(file.getName().replace(".conf", ""));
-            }
-        }
-    }
 
     private void populatePokeStopHashMap() {
         _registry.registryList.forEach(pokeStopData -> _registeredPokeStops.put(pokeStopData.getPokeStopUniqueId(), pokeStopData));

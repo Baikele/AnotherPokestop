@@ -19,6 +19,8 @@ import org.spongepowered.api.text.serializer.TextSerializers;
 import org.spongepowered.common.item.inventory.util.ItemStackUtil;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -67,48 +69,45 @@ public class Utils {
     public static boolean claimable(Player player, UUID pokestopID) {
 
         String playerID = player.getUniqueId().toString();
+        final String path = AnotherPokeStop.getInstance().getPlayerFolder() + playerID + ".conf";
         Date time = new Date();
 
-        if(!AnotherPokeStop.getInstance()._playerData.contains(playerID)) {
+        if(Files.notExists(Paths.get(path))) {
             PlayerCooldowns playerCooldowns = new PlayerCooldowns(pokestopID, time);
-            PlayerData newplayerData = new PlayerData(new File(AnotherPokeStop.getInstance().getPlayerFolder(), playerID + ".conf"));
-            newplayerData.load();
-            AnotherPokeStop.getInstance()._playerData.add(newplayerData.getFile().getName().replace(".conf", ""));
-            newplayerData.playerCooldowns.add(playerCooldowns);
-            newplayerData.save();
+            PlayerData newPlayerData = new PlayerData(new File(AnotherPokeStop.getInstance().getPlayerFolder(), playerID + ".conf"));
+            newPlayerData.load();
+            newPlayerData.playerCooldowns.add(playerCooldowns);
+            newPlayerData.save();
             return true;
         }
 
         PlayerData playerData = new PlayerData(new File(AnotherPokeStop.getInstance().getPlayerFolder(), playerID + ".conf"));
         playerData.load();
 
-        if(AnotherPokeStop.getInstance()._playerData.contains(playerID)) {
-
-            int entrySum = playerData.playerCooldowns.size();
-            int index = 0;
-            PlayerCooldowns playerCooldowns = new PlayerCooldowns(pokestopID, time);
-            for(int i = 0; i < entrySum; i++) {
-                if (playerData.playerCooldowns.get(index).getPokestopID().equals(playerCooldowns.getPokestopID())) {
-                    break;
-                }
-                index = index + 1;
-                if(index >= entrySum) {
-                    playerData.playerCooldowns.add(playerCooldowns);
-                    playerData.save();
-                    return true;
-                }
+        int entrySum = playerData.playerCooldowns.size();
+        int index = 0;
+        PlayerCooldowns playerCooldowns = new PlayerCooldowns(pokestopID, time);
+        for(int i = 0; i < entrySum; i++) {
+            if (playerData.playerCooldowns.get(index).getPokestopID().equals(playerCooldowns.getPokestopID())) {
+                break;
             }
-
-              long lastVisit = playerData.playerCooldowns.get(index).getDate().getTime();
-              long remainingTime = time.getTime() - lastVisit;
-
-              if(TimeUnit.MILLISECONDS.toMinutes(remainingTime) < (AnotherPokeStop.getConfig().config.cooldown * 60L)) {
-                  return false;
-              }
-
-            playerData.playerCooldowns.set(index, playerCooldowns);
-            playerData.save();
+            index = index + 1;
+            if(index >= entrySum) {
+                playerData.playerCooldowns.add(playerCooldowns);
+                playerData.save();
+                return true;
+            }
         }
+
+          long lastVisit = playerData.playerCooldowns.get(index).getDate().getTime();
+          long remainingTime = time.getTime() - lastVisit;
+
+          if(TimeUnit.MILLISECONDS.toMinutes(remainingTime) < (AnotherPokeStop.getConfig().config.cooldown * 60L)) {
+              return false;
+          }
+
+        playerData.playerCooldowns.set(index, playerCooldowns);
+        playerData.save();
         return true;
     }
 
