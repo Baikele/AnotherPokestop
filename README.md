@@ -9,11 +9,15 @@ Requirements:
 Additional Information:
 A private DependencyLoader from https://github.com/HexagonMC is used. The DependencyLoader loads a private ConfigManager.
 
+##Commands
+
 Commands:
 - /setpokestop Red Green Blue Loottable <<<---- Argument optional
 - /setpokestopdummy
 - /removepokestop
 - /apsreload
+
+##Permissions
 
 Permissions:
 - anotherpokestop.set
@@ -21,6 +25,8 @@ Permissions:
 - anotherpokestop.setdummy
 - anotherpokestop.reload
 - anotherpokestop.claimpokestop
+
+##Support
 
 For questions and support visit me on discord.
 Discord Link: https://discord.gg/hpcYj6yFAW
