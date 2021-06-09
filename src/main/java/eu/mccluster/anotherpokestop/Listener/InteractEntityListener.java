@@ -16,7 +16,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import java.util.List;
 import java.util.UUID;
 
-
 public class InteractEntityListener {
 
     final AnotherPokeStop _plugin;
