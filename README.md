@@ -13,4 +13,5 @@ Permissions:
 - anotherpokestop.reload
 - anotherpokestop.claimpokestop
 
+For questions and support visit me on discord.
 Discord Link: https://discord.gg/hpcYj6yFAW
