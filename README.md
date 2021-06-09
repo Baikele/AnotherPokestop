@@ -1,7 +1,7 @@
 New Pokestop Plugin that uses the with 8.2 implemented EntityPokestop
 
 Commands:
-- /setpokestop <Red Green Blue> <Loottable> <<<---- Argument optional
+- /setpokestop Red Green Blue Loottable <<<---- Argument optional
 - /setpokestopdummy
 - /removepokestop
 - /apsreload
