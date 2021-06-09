@@ -9,14 +9,11 @@ import eu.mccluster.anotherpokestop.config.loottables.LootTableStart;
 import eu.mccluster.anotherpokestop.config.trainerConfig.TrainerBaseConfig;
 import eu.mccluster.anotherpokestop.objects.PlayerCooldowns;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.item.ItemType;
-import org.spongepowered.api.item.inventory.ItemStack;
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.serializer.TextSerializers;
-import org.spongepowered.common.item.inventory.util.ItemStackUtil;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.server.permission.PermissionAPI;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -26,22 +23,19 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 public class Utils {
 
     public Utils() {
     }
 
-    public static Text toText(String text) {
-        return TextSerializers.FORMATTING_CODE.deserialize(text);
+    public static ITextComponent toText(String text) {
+        return TextSerializer.parse(text);
     }
 
-    public static ItemStack itemStackFromType(ItemType type, int quantity) {
-        return ItemStack.builder()
-                .itemType(type)
-                .quantity(quantity)
-                .build();
+    public static ItemStack itemStackFromType(String itemName, int quantity) {
+        ItemStack itemStack = GameRegistry.makeItemStack(itemName, 0, quantity, null);
+        return itemStack;
     }
 
     public static void dropScreen(String title, String text, EntityPlayerMP p, List<net.minecraft.item.ItemStack> items) {
@@ -62,13 +56,13 @@ public class Utils {
             return configFile;
     }
 
-    public static List<net.minecraft.item.ItemStack> listToNative(List<ItemStack> spongeStacks) {
-        return spongeStacks.stream().map(ItemStackUtil::toNative).collect(Collectors.toList());
+    public static boolean hasPermission(EntityPlayerMP player, String permissionNode) {
+        return (PermissionAPI.hasPermission(player, permissionNode) || player.canUseCommand(4, permissionNode));
     }
 
-    public static boolean claimable(Player player, UUID pokestopID) {
+    public static boolean claimable(EntityPlayerMP player, UUID pokestopID) {
 
-        String playerID = player.getUniqueId().toString();
+        String playerID = player.getUniqueID().toString();
         final String path = AnotherPokeStop.getInstance().getPlayerFolder() + playerID + ".conf";
         Date time = new Date();
 
@@ -137,7 +131,7 @@ public class Utils {
                     b = _loottable.loottable.lootData.get(listEntry).lootRarity + b;
 
                 }
-                ItemStack rewardItem = Utils.itemStackFromType(Sponge.getRegistry().getType(ItemType.class, _loottable.loottable.lootData.get(listEntry).lootItem).get(), _loottable.loottable.lootData.get(listEntry).lootAmount);
+                ItemStack rewardItem = Utils.itemStackFromType(_loottable.loottable.lootData.get(listEntry).lootItem, _loottable.loottable.lootData.get(listEntry).lootAmount);
                 outList.add(rewardItem);
             }
         } else {
@@ -151,7 +145,7 @@ public class Utils {
                     b = _loottable.loottable.rocketData.get(listEntry).lootRarity + b;
 
                 }
-                ItemStack rewardItem = Utils.itemStackFromType(Sponge.getRegistry().getType(ItemType.class, _loottable.loottable.rocketData.get(listEntry).lootItem).get(), _loottable.loottable.rocketData.get(listEntry).lootAmount);
+                ItemStack rewardItem = Utils.itemStackFromType(_loottable.loottable.rocketData.get(listEntry).lootItem, _loottable.loottable.rocketData.get(listEntry).lootAmount);
                 outList.add(rewardItem);
             }
 

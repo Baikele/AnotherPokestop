@@ -3,36 +3,47 @@ package eu.mccluster.anotherpokestop.commands;
 import eu.mccluster.anotherpokestop.AnotherPokeStop;
 import eu.mccluster.anotherpokestop.config.AnotherPokeStopConfig;
 import eu.mccluster.anotherpokestop.utils.Utils;
-import lombok.RequiredArgsConstructor;
-import org.spongepowered.api.command.CommandException;
-import org.spongepowered.api.command.CommandResult;
-import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.args.CommandContext;
-import org.spongepowered.api.command.spec.CommandExecutor;
-import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.text.Text;
+import net.minecraft.command.CommandBase;
+import net.minecraft.command.CommandException;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
 
-@RequiredArgsConstructor
-public class RemovePokeStop implements CommandExecutor {
+public class RemovePokeStop extends CommandBase {
 
-    final AnotherPokeStop _plugin;
-    final AnotherPokeStopConfig _config;
+    AnotherPokeStop _plugin = AnotherPokeStop.getInstance();
+    AnotherPokeStopConfig _config = AnotherPokeStop.getConfig().config;
 
     @Override
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-        if (!(src instanceof Player)) {
-            src.sendMessage(Text.of("[AnotherPokeStop] Hello GlaDOS, you´re not a Player!"));
-            return CommandResult.empty();
-        }
-        Player p = (Player) src;
-        if(_plugin._currentPokestopRemovers.contains(p.getUniqueId())) {
-            _plugin._currentPokestopRemovers.remove(p.getUniqueId());
-            p.sendMessage(Utils.toText(_config.disableRemover));
-        } else {
-            _plugin._currentPokestopRemovers.add(p.getUniqueId());
-            p.sendMessage(Utils.toText(_config.enableRemover));
-        }
-        return CommandResult.success();
+    public String getName() {
+        return "removepokestop";
     }
 
+    @Override
+    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
+        return sender.canUseCommand(4, "anotherpokestop.remove");
+    }
+
+    @Override
+    public String getUsage(ICommandSender sender) {
+        return "/removepokestop";
+    }
+
+    @Override
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+
+        if (!(sender instanceof EntityPlayerMP)) {
+            sender.sendMessage(Utils.toText("[AnotherPokeStop] Hello GlaDOS, you´re not a Player!"));
+            return;
+        }
+        EntityPlayerMP p = (EntityPlayerMP) sender;
+        if(_plugin._currentPokestopRemovers.contains(p.getUniqueID())) {
+            _plugin._currentPokestopRemovers.remove(p.getUniqueID());
+            p.sendMessage(Utils.toText(_config.disableRemover));
+        } else {
+            _plugin._currentPokestopRemovers.add(p.getUniqueID());
+            p.sendMessage(Utils.toText(_config.enableRemover));
+        }
+
+    }
 }

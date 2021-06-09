@@ -2,23 +2,18 @@ package eu.mccluster.anotherpokestop;
 
 import com.pixelmonmod.pixelmon.Pixelmon;
 import eu.mccluster.anotherpokestop.Listener.*;
-import eu.mccluster.anotherpokestop.commands.*;
-import eu.mccluster.anotherpokestop.commands.elements.RGBElement;
+import eu.mccluster.anotherpokestop.commands.CommandRegistry;
 import eu.mccluster.anotherpokestop.config.AnotherPokeStopMainConfig;
 import eu.mccluster.anotherpokestop.config.PokeStopRegistry;
 import eu.mccluster.anotherpokestop.config.loottables.LootTableStart;
 import eu.mccluster.anotherpokestop.config.trainerConfig.TrainerBaseConfig;
-import eu.mccluster.anotherpokestop.commands.elements.LoottableElement;
 import eu.mccluster.anotherpokestop.objects.PokeStopData;
 import eu.mccluster.anotherpokestop.objects.TrainerObject;
-import eu.mccluster.anotherpokestop.utils.Utils;
 import lombok.Getter;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.command.args.GenericArguments;
-import org.spongepowered.api.command.spec.CommandSpec;
-import org.spongepowered.api.text.Text;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -74,11 +69,11 @@ public class AnotherPokeStop {
         }
     }
 
-    public static void enable(){
-        _instance.onEnable();
+    public static void enable(FMLServerStartingEvent event){
+        _instance.onEnable(event);
     }
 
-    private void onEnable() {
+    private void onEnable(FMLServerStartingEvent event) {
         _config = new AnotherPokeStopMainConfig(new File(AnotherPokeStopPlugin.getInstance().getDataFolder(), "AnotherPokeStop.conf"));
         _lootConfig = new LootTableStart(new File(_lootFolder, "DefaultLootConfig.conf"));
         _registry = new PokeStopRegistry(new File(AnotherPokeStopPlugin.getInstance().getDataFolder(), "PokestopRegistry.conf"));
@@ -88,7 +83,7 @@ public class AnotherPokeStop {
         _config.load();
         _trainer.load();
         registerListeners();
-        registerCommands();
+        CommandRegistry.registerCommands(event);
         populatePokeStopHashMap();
         loadLoottables();
     }
@@ -100,51 +95,17 @@ public class AnotherPokeStop {
     }
 
 
-    private void registerCommands() {
-        CommandSpec setPokeStop = CommandSpec.builder()
-                .executor(new SetPokeStop(_config.config))
-                .permission("anotherpokestop.set")
-                .description(Utils.toText("&6Create a new Pokestop"))
-                .arguments(
-                        GenericArguments.optionalWeak(new RGBElement(Text.of("rgb"))),
-                        GenericArguments.optional(new LoottableElement(Text.of("loottable"))))
-                .build();
-        Sponge.getCommandManager().register(AnotherPokeStopPlugin.getInstance(), setPokeStop, "setpokestop");
-
-        CommandSpec removePokeStop = CommandSpec.builder()
-                .executor(new RemovePokeStop(this, _config.config))
-                .permission("anotherpokestop.remove")
-                .description(Utils.toText("&6Switch to the Remove Mode"))
-                .build();
-        Sponge.getCommandManager().register(AnotherPokeStopPlugin.getInstance(), removePokeStop, "removepokestop");
-
-        CommandSpec setPokeStopDummy = CommandSpec.builder()
-                .executor((new SetPokeStopDummy(_config.config)))
-                .permission("anotherpokestop.setdummy")
-                .description(Utils.toText("&6Create a new dummy Pokestop"))
-                .arguments(GenericArguments.optional(new RGBElement(Text.of("rgb"))))
-                .build();
-        Sponge.getCommandManager().register(AnotherPokeStopPlugin.getInstance(), setPokeStopDummy, "setpokestopdummy");
-
-        CommandSpec apsReload = CommandSpec.builder()
-                .executor(new Apsreload())
-                .permission("anotherpokestop.reload")
-                .description(Utils.toText("&6Reloads every config of the plugin"))
-                .build();
-        Sponge.getCommandManager().register(AnotherPokeStopPlugin.getInstance(), apsReload, "apsreload");
-    }
-
 
     public void saveRegistry() { _registry.save(); }
 
     private void registerListeners() {
         InteractEntityListener entityListener = new InteractEntityListener(this, _config.config, _registry);
-        Sponge.getEventManager().registerListeners(AnotherPokeStopPlugin.getInstance(), new PlayerLeftListener(this));
-        Sponge.getEventManager().registerListeners(AnotherPokeStopPlugin.getInstance(), new PokeStopFishingEvent());
-        Sponge.getEventManager().registerListeners(AnotherPokeStopPlugin.getInstance(), entityListener);
+        MinecraftForge.EVENT_BUS.register(new PlayerLeftListener(this));
+        MinecraftForge.EVENT_BUS.register(new PokeStopFishingEvent());
+        MinecraftForge.EVENT_BUS.register(entityListener);
         Pixelmon.EVENT_BUS.register(entityListener);
-        Pixelmon.EVENT_BUS.register(new BattleEndListener(this, _config.config));
-        Pixelmon.EVENT_BUS.register(new BattleStartListener(this));
+        Pixelmon.EVENT_BUS.register(new BattleEndListener(_config.config));
+        Pixelmon.EVENT_BUS.register(new BattleStartListener());
     }
 
     private void loadLoottables() {

@@ -1,18 +1,18 @@
 package eu.mccluster.anotherpokestop.Listener;
 
 import com.pixelmonmod.pixelmon.entities.EntityPokestop;
-import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.action.FishingEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 
 public class PokeStopFishingEvent {
 
-    @Listener
-    public void onPokestopGetFished(FishingEvent.HookEntity event) {
-        if(event.getTargetEntity() instanceof EntityPokestop) {
-            event.setCancelled(true);
+    @SubscribeEvent
+    public void PokeStopFishEvent(LivingEvent.LivingUpdateEvent event) {
+        if(event.getEntity() instanceof EntityPokestop) {
+            event.setCanceled(true);
+            return;
+        }
         }
     }
 
-
-}

@@ -1,40 +1,66 @@
 package eu.mccluster.anotherpokestop.commands;
 
-import com.flowpowered.math.vector.Vector3d;
 import com.pixelmonmod.pixelmon.entities.EntityPokestop;
+import eu.mccluster.anotherpokestop.AnotherPokeStop;
 import eu.mccluster.anotherpokestop.config.AnotherPokeStopConfig;
 import eu.mccluster.anotherpokestop.objects.RGBStorage;
 import eu.mccluster.anotherpokestop.utils.Utils;
-import lombok.RequiredArgsConstructor;
+import net.minecraft.command.CommandBase;
+import net.minecraft.command.CommandException;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.spongepowered.api.command.CommandException;
-import org.spongepowered.api.command.CommandResult;
-import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.args.CommandContext;
-import org.spongepowered.api.command.spec.CommandExecutor;
-import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.text.Text;
 
-import java.util.Optional;
+public class SetPokeStopDummy extends CommandBase {
 
-@RequiredArgsConstructor
-public class SetPokeStopDummy implements CommandExecutor {
-
-    final AnotherPokeStopConfig _config;
+    AnotherPokeStopConfig _config = AnotherPokeStop.getConfig().config;
 
     @Override
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-        if (!(src instanceof Player)) {
-            src.sendMessage(Text.of("[AnotherPokeStop] Hello GlaDOS, get a ingame Player!"));
-            return CommandResult.empty();
+    public String getName() {
+        return "setpokestopdummy";
+    }
+
+    @Override
+    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
+        return sender.canUseCommand(4, "anotherpokestop.setdummy");
+    }
+
+    @Override
+    public String getUsage(ICommandSender sender) {
+        return "/setpokestopdummy";
+    }
+
+    @Override
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+        if (!(sender instanceof EntityPlayerMP)) {
+            sender.sendMessage(Utils.toText("[AnotherPokeStop] Hello GlaDOS, get a ingame Player!"));
+            return;
         }
 
-        Optional<RGBStorage> rgbStorageOptional = args.<RGBStorage>getOne("rgb");
-        RGBStorage rgbStorage = rgbStorageOptional.orElseGet(() -> new RGBStorage(_config.standardColors.red, _config.standardColors.green, _config.standardColors.blue));
+        EntityPlayerMP p = (EntityPlayerMP) sender;
+        RGBStorage rgbStorage;
+        if(args.length == 3) {
 
-        Player p = (Player) src;
-        Vector3d playerPos = p.getPosition();
-        World playerWorld = (World) p.getWorld();
+                int _r = Integer.parseInt(args[0]);
+                int _g = Integer.parseInt(args[1]);
+                int _b = Integer.parseInt(args[2]);
+                if(_r > 255 || _g > 255 || _b > 255) {
+                    p.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &4RGB Limit is 255"));
+                    return;
+                }
+                if(_r < 0 || _g < 0 || _b < 0) {
+                    p.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &4RGB Minimum is 0"));
+                    return;
+                }
+            rgbStorage = new RGBStorage(_r, _g, _b);
+        } else {
+            rgbStorage = new RGBStorage(_config.standardColors.red, _config.standardColors.green, _config.standardColors.blue);
+        }
+
+        BlockPos playerPos = p.getPosition();
+        World playerWorld = p.getEntityWorld();
         EntityPokestop pokestop = new EntityPokestop(playerWorld, playerPos.getX(), playerPos.getY(), playerPos.getZ());
         pokestop.setColor(rgbStorage.getR(), rgbStorage.getG(), rgbStorage.getB());
         pokestop.setAlwaysAnimate(true);
@@ -42,6 +68,6 @@ public class SetPokeStopDummy implements CommandExecutor {
         pokestop.setCubeRange(_config.cubeRange);
         playerWorld.spawnEntity(pokestop);
         p.sendMessage(Utils.toText(_config.setText));
-        return CommandResult.success();
+
     }
 }

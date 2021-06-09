@@ -3,7 +3,6 @@ package eu.mccluster.anotherpokestop.objects;
 import eu.mccluster.dependency.configmanager.api.Config;
 import eu.mccluster.dependency.configmanager.api.annotations.Order;
 import net.minecraft.world.World;
-import org.spongepowered.api.Sponge;
 
 import java.io.File;
 import java.util.UUID;
@@ -42,10 +41,6 @@ public class PokeStopData extends Config {
     public UUID getPokeStopUniqueId() { return UUID.fromString(this.pokeStopUniqueId); }
 
     public RGBStorage getColor() { return this.color; }
-
-    public World getWorld() {
-        return (World) Sponge.getServer().getWorld(this.world).orElseThrow(null);
-    }
 
     public double getPosX() {
         return this.posX;

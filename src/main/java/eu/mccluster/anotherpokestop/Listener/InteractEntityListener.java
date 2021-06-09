@@ -9,11 +9,9 @@ import eu.mccluster.anotherpokestop.utils.RocketUtils;
 import eu.mccluster.anotherpokestop.utils.Utils;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.entity.InteractEntityEvent;
-import org.spongepowered.common.item.inventory.util.ItemStackUtil;
 
 import java.util.List;
 import java.util.UUID;
@@ -32,20 +30,23 @@ public class InteractEntityListener {
         _registry = registry;
     }
 
-    @Listener
-    public void onEntityRightClick(InteractEntityEvent.Secondary.MainHand event) {
-        if (!(event.getTargetEntity() instanceof EntityPokestop)) {
+    @SubscribeEvent
+    public void onEntityRightClick(PlayerInteractEvent.EntityInteract event) {
+        if (!(event.getTarget() instanceof EntityPokestop)) {
             return;
         }
 
-        if (!(event.getSource() instanceof Player)) {
+        if (!(event.getEntityPlayer() instanceof EntityPlayerMP)) {
             return;
         }
-        Player p = (Player) event.getSource();
-        UUID pokeStopId = ((EntityPokestop) event.getTargetEntity()).getUniqueID();
+        if(event.getHand() == EnumHand.OFF_HAND) {
+            return;
+        }
+        EntityPlayerMP p = (EntityPlayerMP) event.getEntityPlayer();
+        UUID pokeStopId = event.getTarget().getUniqueID();
 
 
-        if (_plugin._currentPokestopRemovers.contains(p.getUniqueId()) && AnotherPokeStop.getRegisteredPokeStops().containsKey(pokeStopId)) {
+        if (_plugin._currentPokestopRemovers.contains(p.getUniqueID()) && AnotherPokeStop.getRegisteredPokeStops().containsKey(pokeStopId)) {
 
             for (int i = 0; i < _registry.registryList.size(); i++) {
                 UUID registeredUUID = _registry.registryList.get(i).getPokeStopUniqueId();
@@ -56,18 +57,18 @@ public class InteractEntityListener {
                 }
             }
             AnotherPokeStop.getRegisteredPokeStops().remove(pokeStopId);
-            event.getTargetEntity().remove();
+            event.getTarget().setDead();
             p.sendMessage(Utils.toText(_config.removeText));
             return;
-        } else if (_plugin._currentPokestopRemovers.contains(p.getUniqueId())) {
-            event.getTargetEntity().remove();
+        } else if (_plugin._currentPokestopRemovers.contains(p.getUniqueID())) {
+            event.getTarget().setDead();
             return;
         }
 
-        if (p.hasPermission("anotherpokestop.claimpokestop")) {
+        if (Utils.hasPermission(p,"anotherpokestop.claimpokestop")) {
             boolean cooldown = Utils.claimable(p, pokeStopId);
             if (AnotherPokeStop.getRegisteredPokeStops().containsKey(pokeStopId) && cooldown) {
-                AnotherPokeStop.getUsedPokestop().put(p.getUniqueId(), pokeStopId);
+                AnotherPokeStop.getUsedPokestop().put(p.getUniqueID(), pokeStopId);
                 String lootTable = AnotherPokeStop.getRegisteredPokeStops().get(pokeStopId).getLoottable().getLoottable();
 
                 if (_config.rocketSettings.rocketEvent) {
@@ -80,8 +81,8 @@ public class InteractEntityListener {
                     }
                 }
 
-                List<ItemStack> lootList = Utils.listToNative(Utils.genPokeStopLoot(false, lootTable));
-                AnotherPokeStop.getCurrentDrops().put(p.getUniqueId(), lootList);
+                List<ItemStack> lootList = Utils.genPokeStopLoot(false, lootTable);
+                AnotherPokeStop.getCurrentDrops().put(p.getUniqueID(), lootList);
                 Utils.dropScreen(_config.menuTexts.header, _config.menuTexts.buttonText, (EntityPlayerMP) p, lootList);
 
             } else if (AnotherPokeStop.getRegisteredPokeStops().containsKey(pokeStopId)) {
@@ -94,10 +95,10 @@ public class InteractEntityListener {
 
     @SubscribeEvent
     public void onDropClick(CustomDropsEvent.ClickDrop event) {
-        Player p = (Player) event.getPlayer();
-        if(AnotherPokeStop.getCurrentDrops().containsKey(p.getUniqueId())) {
+        EntityPlayerMP p = event.getPlayer();
+        if(AnotherPokeStop.getCurrentDrops().containsKey(p.getUniqueID())) {
             int slotIndex = event.getIndex();
-            p.getInventory().offer(ItemStackUtil.fromNative(AnotherPokeStop.getCurrentDrops().get(p.getUniqueId()).get(slotIndex)));
+            p.inventory.addItemStackToInventory(AnotherPokeStop.getCurrentDrops().get(p.getUniqueID()).get(slotIndex));
         }
     }
 

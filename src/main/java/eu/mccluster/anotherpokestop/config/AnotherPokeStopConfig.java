@@ -3,7 +3,6 @@ package eu.mccluster.anotherpokestop.config;
 import eu.mccluster.dependency.configmanager.api.Config;
 import eu.mccluster.dependency.configmanager.api.annotations.Comment;
 import eu.mccluster.dependency.configmanager.api.annotations.Order;
-import org.checkerframework.checker.units.qual.C;
 
 import java.io.File;
 

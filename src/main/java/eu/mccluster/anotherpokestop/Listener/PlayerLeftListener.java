@@ -2,8 +2,8 @@ package eu.mccluster.anotherpokestop.Listener;
 
 import eu.mccluster.anotherpokestop.AnotherPokeStop;
 import net.minecraft.entity.player.EntityPlayerMP;
-import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.network.ClientConnectionEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 
 public class PlayerLeftListener {
 
@@ -13,16 +13,16 @@ public class PlayerLeftListener {
         this._plugin = _plugin;
     }
 
-    @Listener
-    public void PlayerLeftEvent(ClientConnectionEvent.Disconnect event) {
-        _plugin._currentPokestopRemovers.remove(event.getTargetEntity().getUniqueId());
-        EntityPlayerMP player = (EntityPlayerMP) event.getTargetEntity();
-        if(_plugin.getCurrentBattles().containsKey(player)) {
-            _plugin.getCurrentBattles().get(player).getTrainer().setDead();
-            _plugin.getCurrentBattles().remove((EntityPlayerMP) event.getTargetEntity());
+    @SubscribeEvent
+    public void PlayerLeftEvent(PlayerEvent.PlayerLoggedOutEvent event) {
+        EntityPlayerMP player = (EntityPlayerMP) event.player;
+        _plugin._currentPokestopRemovers.remove(player.getUniqueID());
+        if(AnotherPokeStop.getCurrentBattles().containsKey(player)) {
+            AnotherPokeStop.getCurrentBattles().get(player).getTrainer().setDead();
+            AnotherPokeStop.getCurrentBattles().remove(player);
         }
         if(AnotherPokeStop.getPokestopLoot().containsKey(player)) {
-            AnotherPokeStop.getPokestopLoot().remove((EntityPlayerMP) event.getTargetEntity());
+            AnotherPokeStop.getPokestopLoot().remove(player);
         }
     }
 }

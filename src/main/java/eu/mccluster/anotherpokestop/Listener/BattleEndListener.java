@@ -16,17 +16,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BattleEndListener {
 
-    private final AnotherPokeStop _instance;
     private final AnotherPokeStopConfig _config;
 
     @SubscribeEvent
     public void onBattleEnd(BattleEndEvent event) {
-        _instance.getCurrentBattles().forEach((playerMP, trainer) -> {
+        AnotherPokeStop.getCurrentBattles().forEach((playerMP, trainer) -> {
             if(event.bc.equals(trainer.getBattleController())) {
                     event.results.forEach(((battleParticipant, battleResults) -> {
                         if(battleParticipant.getEntity() instanceof EntityPlayerMP) {
                             if(battleResults == BattleResults.VICTORY) {
-                                List<ItemStack> lootList = Utils.listToNative(Utils.genPokeStopLoot(true, AnotherPokeStop.getPokestopLoot().get(playerMP)));
+                                List<ItemStack> lootList = Utils.genPokeStopLoot(true, AnotherPokeStop.getPokestopLoot().get(playerMP));
                                 AnotherPokeStop.getCurrentDrops().put(playerMP.getUniqueID(), lootList);
                                 Utils.dropScreen(_config.menuTexts.header, _config.menuTexts.buttonText, playerMP, lootList);
                             }

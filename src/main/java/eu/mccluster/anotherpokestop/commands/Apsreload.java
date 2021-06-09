@@ -2,19 +2,34 @@ package eu.mccluster.anotherpokestop.commands;
 
 import eu.mccluster.anotherpokestop.AnotherPokeStop;
 import eu.mccluster.anotherpokestop.utils.Utils;
-import org.spongepowered.api.command.CommandException;
-import org.spongepowered.api.command.CommandResult;
-import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.args.CommandContext;
-import org.spongepowered.api.command.spec.CommandExecutor;
+import net.minecraft.command.CommandBase;
+import net.minecraft.command.CommandException;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.server.MinecraftServer;
 
-public class Apsreload implements CommandExecutor {
+public class Apsreload extends CommandBase {
+
 
     @Override
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+    public String getName() {
+        return "apsreload";
+    }
+
+    @Override
+    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
+        return sender.canUseCommand(4, "anotherpokestop.reload");
+    }
+
+    @Override
+    public String getUsage(ICommandSender sender) {
+        return "/apsreload";
+    }
+
+    @Override
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         AnotherPokeStop.getInstance().onReload();
-        src.sendMessage(Utils.toText("&asuccessfully reloaded AnotherPokeStop."));
-        return CommandResult.success();
+        sender.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &4Successfully reloaded AnotherPokeStop."));
+
     }
 }
 

@@ -1,49 +1,48 @@
 package eu.mccluster.anotherpokestop;
 
-import com.google.inject.Inject;
 import eu.mccluster.dependency.deploader.api.DependencyLoader;
 import eu.mccluster.dependency.deploader.api.DependencyLoaderApi;
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.spongepowered.api.config.ConfigDir;
-import org.spongepowered.api.event.game.state.GameInitializationEvent;
-import org.spongepowered.api.event.game.state.GameStartedServerEvent;
-import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.plugin.Dependency;
-import org.spongepowered.api.plugin.Plugin;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 
-@Plugin(
-        id = "anotherpokestop",
+@Mod(
+        modid = "anotherpokestop",
         name = "AnotherPokeStop",
-        dependencies = {
-                @Dependency( id = "pixelmon" )
-        }
+        version = "@VERSION@",
+        acceptableRemoteVersions = "*"
 )
 public class AnotherPokeStopPlugin {
 
-    @Inject
     private Logger logger;
 
     @Getter
     private static AnotherPokeStopPlugin _instance;
 
     @Getter
-    @Inject
-    @ConfigDir(sharedRoot = false)
     private File _dataFolder;
 
-    @Listener
-    public void load(GameInitializationEvent event) {
+    @Mod.EventHandler
+    public void preInit(FMLPreInitializationEvent event) {
+        _dataFolder = new File(event.getModConfigurationDirectory(), "anotherpokestop");
+        logger = event.getModLog();
+    }
+
+    @Mod.EventHandler
+    public void load(FMLInitializationEvent event) {
         _instance = this;
         initDependencies();
         AnotherPokeStop.load();
     }
 
-    @Listener
-    public void onServerStart(GameStartedServerEvent event){
-        AnotherPokeStop.enable();
+    @Mod.EventHandler
+    public void onServerStart(FMLServerStartingEvent event){
+        AnotherPokeStop.enable(event);
         logger.info("AnotherPokeStop is running!");
     }
 

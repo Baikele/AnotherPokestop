@@ -8,14 +8,13 @@ import eu.mccluster.anotherpokestop.config.trainerConfig.TrainerBaseConfig;
 import eu.mccluster.anotherpokestop.objects.TrainerObject;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
-import org.spongepowered.api.entity.living.player.Player;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class RocketUtils {
 
-    public static Dialogue genRocketDialogue(UUID uuid, Player p, String lootTable) {
+    public static Dialogue genRocketDialogue(UUID uuid, EntityPlayerMP p, String lootTable) {
         AnotherPokeStopConfig _config = AnotherPokeStop.getConfig().config;
         ArrayList<Choice> choices = new ArrayList<>();
         Choice choice = genRocketReactions(_config.rocketSettings.choiceYes, p, uuid, lootTable);
@@ -29,7 +28,7 @@ public class RocketUtils {
     }
 
 
-    public static Choice genRocketReactions(String text, Player p, UUID uuid, String lootTable) {
+    public static Choice genRocketReactions(String text, EntityPlayerMP p, UUID uuid, String lootTable) {
         AnotherPokeStopConfig _config = AnotherPokeStop.getConfig().config;
         return Choice.builder()
                 .setText(text)
@@ -41,8 +40,8 @@ public class RocketUtils {
 
                     } else if(text == _config.rocketSettings.choiceNo) {
 
-                        List<ItemStack> lootList = Utils.listToNative(Utils.genPokeStopLoot(false, lootTable));
-                        AnotherPokeStop.getCurrentDrops().put(p.getUniqueId(), lootList);
+                        List<ItemStack> lootList = Utils.genPokeStopLoot(false, lootTable);
+                        AnotherPokeStop.getCurrentDrops().put(p.getUniqueID(), lootList);
                         Utils.dropScreen(_config.menuTexts.header, _config.menuTexts.buttonText, (EntityPlayerMP) p, lootList);
                     }
                 })
