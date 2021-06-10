@@ -40,7 +40,7 @@ public class RocketUtils {
 
                     } else if(text == _config.rocketSettings.choiceNo) {
 
-                        List<ItemStack> lootList = Utils.genPokeStopLoot(false, lootTable);
+                        List<ItemStack> lootList = Utils.genPokeStopLoot(p, false, lootTable);
                         AnotherPokeStop.getCurrentDrops().put(p.getUniqueID(), lootList);
                         Utils.dropScreen(_config.menuTexts.header, _config.menuTexts.buttonText, (EntityPlayerMP) p, lootList);
                     }

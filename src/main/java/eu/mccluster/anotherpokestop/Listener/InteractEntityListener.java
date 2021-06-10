@@ -5,12 +5,16 @@ import com.pixelmonmod.pixelmon.entities.EntityPokestop;
 import eu.mccluster.anotherpokestop.AnotherPokeStop;
 import eu.mccluster.anotherpokestop.config.AnotherPokeStopConfig;
 import eu.mccluster.anotherpokestop.config.PokeStopRegistry;
+import eu.mccluster.anotherpokestop.utils.Placeholders;
 import eu.mccluster.anotherpokestop.utils.RocketUtils;
 import eu.mccluster.anotherpokestop.utils.Utils;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EnumHand;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.List;
@@ -65,27 +69,27 @@ public class InteractEntityListener {
         }
 
         if (Utils.hasPermission(p,"anotherpokestop.claimpokestop")) {
-            boolean cooldown = Utils.claimable(p, pokeStopId);
+            String lootTable = AnotherPokeStop.getRegisteredPokeStops().get(pokeStopId).getLoottable().getLoottable();
+            boolean cooldown = Utils.claimable(p, pokeStopId, lootTable);
             if (AnotherPokeStop.getRegisteredPokeStops().containsKey(pokeStopId) && cooldown) {
                 AnotherPokeStop.getUsedPokestop().put(p.getUniqueID(), pokeStopId);
-                String lootTable = AnotherPokeStop.getRegisteredPokeStops().get(pokeStopId).getLoottable().getLoottable();
 
                 if (_config.rocketSettings.rocketEvent) {
                     int rocketEvent = _config.rocketSettings.rocketChance;
                     int rocketRoll = (int) (100 * Math.random());
                     if (rocketEvent >= rocketRoll) {
                         RocketUtils.genRocketDialogue(pokeStopId, p, lootTable)
-                                .open((EntityPlayerMP) p);
+                                .open(p);
                         return;
                     }
                 }
 
-                List<ItemStack> lootList = Utils.genPokeStopLoot(false, lootTable);
+                List<ItemStack> lootList = Utils.genPokeStopLoot(p,false, lootTable);
                 AnotherPokeStop.getCurrentDrops().put(p.getUniqueID(), lootList);
                 Utils.dropScreen(_config.menuTexts.header, _config.menuTexts.buttonText, (EntityPlayerMP) p, lootList);
 
             } else if (AnotherPokeStop.getRegisteredPokeStops().containsKey(pokeStopId)) {
-                p.sendMessage(Utils.toText(_config.cooldownText));
+                p.sendMessage(Utils.toText(Placeholders.parseRemainingTimePlacerholder(_config.cooldownText, p, pokeStopId, lootTable)));
             }
         } else {
             p.sendMessage(Utils.toText(_config.noClaimPermission));
@@ -97,7 +101,27 @@ public class InteractEntityListener {
         EntityPlayerMP p = event.getPlayer();
         if(AnotherPokeStop.getCurrentDrops().containsKey(p.getUniqueID())) {
             int slotIndex = event.getIndex();
+            if(AnotherPokeStop.getCurrentDrops().get(p.getUniqueID()).get(slotIndex).getItem() == Item.getByNameOrId(_config.commandItem)) {
+                MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+                server.getCommandManager().executeCommand(server, AnotherPokeStop.getCurrentCommandDrops().get(p.getUniqueID()).get(slotIndex));
+                return;
+            }
             p.inventory.addItemStackToInventory(AnotherPokeStop.getCurrentDrops().get(p.getUniqueID()).get(slotIndex));
+        }
+    }
+
+    @SubscribeEvent
+    public void onCloseClick(CustomDropsEvent.ClickButton event) {
+        EntityPlayerMP p = event.getPlayer();
+        if(AnotherPokeStop.getCurrentDrops().containsKey(p.getUniqueID()) && _config.claimRewardsOnClose) {
+            for(int i = 0; i < AnotherPokeStop.getCurrentDrops().get(p.getUniqueID()).size(); i++) {
+                if(AnotherPokeStop.getCurrentDrops().get(p.getUniqueID()).get(i).getItem() == Item.getByNameOrId(_config.commandItem)) {
+                    MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+                    server.getCommandManager().executeCommand(server, AnotherPokeStop.getCurrentCommandDrops().get(p.getUniqueID()).get(i));
+                } else {
+                    p.inventory.addItemStackToInventory(AnotherPokeStop.getCurrentDrops().get(p.getUniqueID()).get(i));
+                }
+            }
         }
     }
 

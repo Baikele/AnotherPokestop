@@ -25,7 +25,7 @@ public class BattleEndListener {
                     event.results.forEach(((battleParticipant, battleResults) -> {
                         if(battleParticipant.getEntity() instanceof EntityPlayerMP) {
                             if(battleResults == BattleResults.VICTORY) {
-                                List<ItemStack> lootList = Utils.genPokeStopLoot(true, AnotherPokeStop.getPokestopLoot().get(playerMP));
+                                List<ItemStack> lootList = Utils.genPokeStopLoot(playerMP, true, AnotherPokeStop.getPokestopLoot().get(playerMP));
                                 AnotherPokeStop.getCurrentDrops().put(playerMP.getUniqueID(), lootList);
                                 Utils.dropScreen(_config.menuTexts.header, _config.menuTexts.buttonText, playerMP, lootList);
                             }
