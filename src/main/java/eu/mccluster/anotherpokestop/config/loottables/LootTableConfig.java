@@ -11,6 +11,18 @@ import java.util.List;
 public class LootTableConfig extends Config {
 
     @Order(1)
+    @Comment("Amount of ItemStacks the player receives when collects a Pokestop")
+    public int lootSize = 3;
+
+    @Order(2)
+    @Comment("Amount of ItemStacks the player receives when he wins a Team Rocket Encounter")
+    public int rocketLootSize = 6;
+
+    @Order(2)
+    @Comment("Cooldown to collect the Pokestop again. Add a m, h or d to the number to change the cooldown to Minutes, Hours or Days")
+    public String cooldown = "24h";
+
+    @Order(3)
     @Comment("Default LootTableConfig for Pokestop")
     public List<LootTableData> lootData = new ArrayList<>();
     public List<RocketTableData> rocketData = new ArrayList<>();

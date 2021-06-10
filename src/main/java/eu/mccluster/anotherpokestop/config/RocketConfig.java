@@ -17,10 +17,6 @@ public class RocketConfig extends Config {
     public int rocketChance = 5;
 
     @Order(3)
-    @Comment("Amount of items the player receives after defeating the Grunt")
-    public int rocketAmount = 4;
-
-    @Order(3)
     @Comment("Dialogue the Player get when he encounters Team Rocket")
     public String dialogueText = "You encountered a Team Rocket Grunt";
 

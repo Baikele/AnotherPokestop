@@ -39,6 +39,9 @@ public class AnotherPokeStop {
     private static ConcurrentHashMap<UUID, List<ItemStack>> _currentDrops = new ConcurrentHashMap<>();
 
     @Getter
+    private static ConcurrentHashMap<UUID, List<String>> _currentCommandDrops = new ConcurrentHashMap<>();
+
+    @Getter
     private static ConcurrentHashMap<UUID, PokeStopData> _registeredPokeStops = new ConcurrentHashMap<>();
 
     @Getter

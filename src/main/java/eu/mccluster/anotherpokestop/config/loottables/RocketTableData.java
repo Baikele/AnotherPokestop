@@ -7,7 +7,7 @@ import java.io.File;
 public class RocketTableData extends Config {
 
     @Order(1)
-    public String lootItem = "pixelmon:poke_ball";
+    public String loot = "pixelmon:poke_ball";
 
     @Order(2)
     public int lootAmount = 1;
