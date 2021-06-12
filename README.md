@@ -11,6 +11,8 @@ A private DependencyLoader from https://github.com/HexagonMC is used. The Depend
 
 ## Commands
 
+For more precise information visit the wiki: https://github.com/Geisterhand/AnotherPokestop/wiki
+
 Commands:
 - /setpokestop
 - /pokestopedit
