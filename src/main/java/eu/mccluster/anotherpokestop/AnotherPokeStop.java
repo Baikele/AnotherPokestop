@@ -54,6 +54,9 @@ public class AnotherPokeStop {
     private static ConcurrentHashMap<UUID, UUID> _usedPokestop = new ConcurrentHashMap<>();
 
     @Getter
+    private static ConcurrentHashMap<UUID, List<String>> _currentEditor = new ConcurrentHashMap<>();
+
+    @Getter
     private final String _lootFolder = AnotherPokeStopPlugin.getInstance().getDataFolder() + File.separator + "loottables" + File.separator;
 
     @Getter

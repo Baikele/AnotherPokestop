@@ -107,9 +107,8 @@ public class SetPokeStop extends CommandBase {
             loottableStorage = new LoottableStorage("DefaultLootConfig");
         }
 
-        BlockPos playerPos = p.getPosition();
         World playerWorld = p.getEntityWorld();
-        EntityPokestop pokestop = new EntityPokestop(playerWorld, playerPos.getX(), playerPos.getY(), playerPos.getZ());
+        EntityPokestop pokestop = new EntityPokestop(playerWorld, p.posX, p.posY, p.posZ);
         pokestop.setColor(rgbStorage.getR(), rgbStorage.getG(), rgbStorage.getB());
         pokestop.setAlwaysAnimate(true);
         pokestop.setNoGravity(true);
@@ -117,7 +116,7 @@ public class SetPokeStop extends CommandBase {
         playerWorld.spawnEntity(pokestop);
         p.sendMessage(Utils.toText(_config.setText));
 
-        PokeStopData newPokeStopData = new PokeStopData(pokestop.getUniqueID(), rgbStorage, playerWorld, playerPos.getX(), playerPos.getY(), playerPos.getZ(), loottableStorage);
+        PokeStopData newPokeStopData = new PokeStopData(pokestop.getUniqueID(), rgbStorage, playerWorld, p.posX, p.posY, p.posZ, loottableStorage);
         AnotherPokeStop.getRegisteredPokeStops().put(pokestop.getUniqueID(), newPokeStopData);
         AnotherPokeStop.getRegistry().registryList.add(newPokeStopData);
         AnotherPokeStop.getInstance().saveRegistry();

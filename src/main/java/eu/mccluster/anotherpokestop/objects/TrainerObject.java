@@ -40,7 +40,7 @@ public class TrainerObject {
             return;
         }
         this._player = player;
-        AnotherPokeStop.getInstance().getCurrentBattles().put(player, this);
+        AnotherPokeStop.getCurrentBattles().put(player, this);
         AnotherPokeStop.getPokestopLoot().put(player, lootTable);
         this._trainer = new NPCTrainer(this._player.world);
         _config = trainerBaseConfig;
@@ -48,6 +48,7 @@ public class TrainerObject {
     }
 
     private void setTrainerInfo(TrainerBaseConfig config) {
+        _trainer.setBossMode(EnumBossMode.valueOf(_config.bossMode));
         _trainer.setLevel(config.trainerLevel);
         _trainer.setName(config.name);
         _trainer.setBattleAIMode(EnumBattleAIMode.valueOf(config.battleAI));

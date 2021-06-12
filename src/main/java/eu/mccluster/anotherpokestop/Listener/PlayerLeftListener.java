@@ -21,8 +21,7 @@ public class PlayerLeftListener {
             AnotherPokeStop.getCurrentBattles().get(player).getTrainer().setDead();
             AnotherPokeStop.getCurrentBattles().remove(player);
         }
-        if(AnotherPokeStop.getPokestopLoot().containsKey(player)) {
-            AnotherPokeStop.getPokestopLoot().remove(player);
-        }
+        AnotherPokeStop.getPokestopLoot().remove(player);
+        AnotherPokeStop.getCurrentEditor().remove(player.getUniqueID());
     }
 }

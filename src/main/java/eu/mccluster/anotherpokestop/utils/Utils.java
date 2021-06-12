@@ -144,8 +144,6 @@ public class Utils {
                         String[] itemName = _loottable.loottable.lootData.get(listEntry).loot.split("itemname>");
                         rewardItem = Utils.itemStackFromType(itemName[0].trim(), _loottable.loottable.lootData.get(listEntry).lootAmount);
                         rewardItem.setStackDisplayName(Placeholders.regex(itemName[1]));
-                        System.out.println(itemName[1]);
-                        System.out.println(itemName[0]);
                     }
                     outList.add(rewardItem);
                 } else {

@@ -23,6 +23,10 @@ public class TrainerBaseConfig  extends Config {
     public String battleAI = "Advanced";
 
     @Order(3)
+    @Comment("Possible bossModes: NotBoss, Common, Uncommon, Rare, Epic, Legendary, Ultimate, Spooky, Drowned, Equal")
+    public String bossMode = "NotBoss";
+
+    @Order(3)
     @Comment("If this is true, players can use dynamax in battle - Either canDynamax or oldGen can be enabled")
     public boolean canDynamax = false;
 
