@@ -12,7 +12,8 @@ A private DependencyLoader from https://github.com/HexagonMC is used. The Depend
 ## Commands
 
 Commands:
-- /setpokestop Red Green Blue Loottable <<<---- Argument optional
+- /setpokestop
+- /pokestopedit
 - /setpokestopdummy
 - /removepokestop
 - /apsreload
@@ -21,6 +22,7 @@ Commands:
 
 Permissions:
 - anotherpokestop.set
+- anotherpokestop.edit
 - anotherpokestop.remove
 - anotherpokestop.setdummy
 - anotherpokestop.reload
