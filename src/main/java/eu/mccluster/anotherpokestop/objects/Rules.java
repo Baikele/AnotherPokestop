@@ -42,6 +42,7 @@ public class Rules extends BattleRules {
         this.teamPreview = config.teamPreview;
         this.getRules().teamPreview = config.teamPreview;
         this.getRules().fullHeal = config.fullheal;
+        this.getRules().raiseToCap = config.raiseToCap;
 
         //Insert default battle clauses
         config.clauses.forEach(this::addClause);

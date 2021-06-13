@@ -32,18 +32,21 @@ public class TrainerBattleRulesConfig extends Config {
     public boolean fullheal = true;
 
     @Order(8)
+    public boolean raiseToCap = false;
+
+    @Order(9)
     @Comment("pokemon for SpeciesClause, speedpass for SpeedPass, sky for SkyBattle, item for ItemClause, sleep for SleepCause, bag for BagClause, forfeit for ForfeitClause, inverse for InverseBattle" +
             "batonpass for BatonPass, drizzleswim, drought, endlessbattle, evasionability, evasion, legendary, mega, moody, ohko, sandstream, shadowtag, smashpass, snowwarning, souldew, swagger, weatherspeed")
     public List<String> clauses = new ArrayList<>();
 
     //Pokemon, Abilities, Moves, Items
-    @Order(9)
+    @Order(10)
     public List<String> bannedPokemon = new ArrayList<>();
 
-    @Order(10)
+    @Order(11)
     public List<String> bannedAbilities = new ArrayList<>();
 
-    @Order(11)
+    @Order(12)
     public List<String> bannedItems = new ArrayList<>();
 
     public TrainerBattleRulesConfig() {

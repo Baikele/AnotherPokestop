@@ -65,7 +65,29 @@ public class Pokestopedit extends CommandBase {
                 loottable.add(option);
                 AnotherPokeStop.getCurrentEditor().put(p.getUniqueID(), loottable);
                 p.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &6Click on Pokestop to edit."));
+            } else if(object.equals("size")) {
+                List<String> size = new ArrayList<>();
+                size.add(object);
+                size.add(option);
+                AnotherPokeStop.getCurrentEditor().put(p.getUniqueID(), size);
+                p.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &6Click on Pokestop to edit."));
             }
+        } else if(args.length == 1) {
+            String object = args[0];
+            if(object.equals("position")) {
+                List<String> position = new ArrayList<>();
+                String x = Double.toString(p.posX);
+                String y = Double.toString(p.posY);
+                String z = Double.toString(p.posZ);
+                position.add(object);
+                position.add(x);
+                position.add(y);
+                position.add(z);
+                AnotherPokeStop.getCurrentEditor().put(p.getUniqueID(), position);
+                p.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &6Position saved. Click on Pokestop to edit."));
+
+            }
+
         } else {
             p.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &4Invalid arguments!"));
         }

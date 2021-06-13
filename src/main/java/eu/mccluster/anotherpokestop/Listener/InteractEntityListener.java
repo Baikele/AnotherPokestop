@@ -50,6 +50,7 @@ public class InteractEntityListener {
         }
         EntityPlayerMP p = (EntityPlayerMP) event.getEntityPlayer();
         UUID pokeStopId = event.getTarget().getUniqueID();
+        EntityPokestop pokestop = (EntityPokestop) event.getTarget();
 
         if(AnotherPokeStop.getCurrentEditor().containsKey(p.getUniqueID()) && !_plugin._currentPokestopRemovers.contains(p.getUniqueID())) {
             if (AnotherPokeStop.getCurrentEditor().get(p.getUniqueID()).get(0).equals("color")) {
@@ -84,9 +85,8 @@ public class InteractEntityListener {
 
             } else if (AnotherPokeStop.getCurrentEditor().get(p.getUniqueID()).get(0).equals("rotation")) {
                 float rotation = (float) Integer.parseInt(AnotherPokeStop.getCurrentEditor().get(p.getUniqueID()).get(1));
-                EntityPokestop pokestop = (EntityPokestop) event.getTarget();
                 pokestop.setPositionAndRotation(pokestop.posX, pokestop.posY, pokestop.posZ, rotation, pokestop.rotationPitch);
-                p.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &6Pokestop rotation changed to &d" + rotation + "°&6."));
+                p.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &6Pokestop rotation changed to &d" + rotation + " &6degree."));
                 AnotherPokeStop.getCurrentEditor().remove(p.getUniqueID());
                 return;
 
@@ -118,7 +118,34 @@ public class InteractEntityListener {
                 p.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &6Pokestop loottable changed to &d" + AnotherPokeStop.getCurrentEditor().get(p.getUniqueID()).get(1)));
                 AnotherPokeStop.getCurrentEditor().remove(p.getUniqueID());
                 return;
+
+            } else if (AnotherPokeStop.getCurrentEditor().get(p.getUniqueID()).get(0).equals("size")) {
+                float size = Float.parseFloat(AnotherPokeStop.getCurrentEditor().get(p.getUniqueID()).get(1));
+                pokestop.setSize(size);
+                p.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &6Changed size to &d" + size + "&6."));
+                return;
+
+            } else if (AnotherPokeStop.getCurrentEditor().get(p.getUniqueID()).get(0).equals("position")) {
+
+                for (int i = 0; i < _registry.registryList.size(); i++) {
+                    UUID registeredUUID = _registry.registryList.get(i).getPokeStopUniqueId();
+                    System.out.println("A");
+                    if (registeredUUID.equals(pokeStopId)) {
+                        System.out.println("B");
+                        double x = Double.parseDouble(AnotherPokeStop.getCurrentEditor().get(p.getUniqueID()).get(1));
+                        double y = Double.parseDouble(AnotherPokeStop.getCurrentEditor().get(p.getUniqueID()).get(2));
+                        double z = Double.parseDouble(AnotherPokeStop.getCurrentEditor().get(p.getUniqueID()).get(3));
+                        RGBStorage rgbStorage = new RGBStorage(_registry.registryList.get(i).getColor().getR(), _registry.registryList.get(i).getColor().getG(), _registry.registryList.get(i).getColor().getB());
+                        pokestop.setPositionAndRotation(x, y ,z, pokestop.rotationYaw, pokestop.rotationPitch);
+                        PokeStopData pokeStopData = new PokeStopData(pokeStopId, rgbStorage, event.getWorld(), x, y, z, _registry.registryList.get(i).getLoottable());
+                        _registry.registryList.set(i, pokeStopData);
+                        AnotherPokeStop.getInstance().saveRegistry();
+                        p.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &6Moved pokestop to saved location."));
+                        break;
+                    }
+                }
             }
+            return;
         }
 
         if (_plugin._currentPokestopRemovers.contains(p.getUniqueID()) && AnotherPokeStop.getRegisteredPokeStops().containsKey(pokeStopId)) {

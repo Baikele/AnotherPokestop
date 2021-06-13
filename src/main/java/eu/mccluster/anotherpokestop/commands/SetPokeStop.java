@@ -113,6 +113,7 @@ public class SetPokeStop extends CommandBase {
         pokestop.setAlwaysAnimate(true);
         pokestop.setNoGravity(true);
         pokestop.setCubeRange(_config.cubeRange);
+        pokestop.setSize(_config.pokestopSize);
         playerWorld.spawnEntity(pokestop);
         p.sendMessage(Utils.toText(_config.setText));
 
