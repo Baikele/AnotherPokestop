@@ -123,6 +123,7 @@ public class InteractEntityListener {
                 float size = Float.parseFloat(AnotherPokeStop.getCurrentEditor().get(p.getUniqueID()).get(1));
                 pokestop.setSize(size);
                 p.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &6Changed size to &d" + size + "&6."));
+                AnotherPokeStop.getCurrentEditor().remove(p.getUniqueID());
                 return;
 
             } else if (AnotherPokeStop.getCurrentEditor().get(p.getUniqueID()).get(0).equals("position")) {
@@ -144,8 +145,10 @@ public class InteractEntityListener {
                         break;
                     }
                 }
+                AnotherPokeStop.getCurrentEditor().remove(p.getUniqueID());
+                return;
             }
-            return;
+
         }
 
         if (_plugin._currentPokestopRemovers.contains(p.getUniqueID()) && AnotherPokeStop.getRegisteredPokeStops().containsKey(pokeStopId)) {
