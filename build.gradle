@@ -15,7 +15,6 @@ buildscript {
 plugins {
     id 'java'
     id 'maven'
-    id 'org.spongepowered.plugin' version '0.9.0'
     id 'com.github.johnrengelman.shadow' version '4.0.4'
 }
 apply plugin: 'net.minecraftforge.gradle'
@@ -53,22 +52,8 @@ repositories {
         }
     }
     maven {
-        name = 'private'
-        url = 'https://maven.hxmc.eu/content/groups/private'
-        if (System.getenv("MAVEN_USER") != null && System.getenv("MAVEN_PASS") != null) {
-            println System.getenv("MAVEN_USER")
-            credentials {
-                username System.getenv("MAVEN_USER")
-                password System.getenv("MAVEN_PASS")
-            }
-        }
-        if (project.hasProperty("MAVEN_USER") && project.hasProperty("MAVEN_PASS")) {
-            println MAVEN_USER
-            credentials {
-                username MAVEN_USER
-                password MAVEN_PASS
-            }
-        }
+        name = 'public'
+        url = 'https://maven.hxmc.eu/content/groups/public/'
     }
 }
 
@@ -120,5 +105,3 @@ processResources{
         exclude 'mods.toml'
     }
 }
-
-sponge.plugin.id = 'anotherpokestop'
