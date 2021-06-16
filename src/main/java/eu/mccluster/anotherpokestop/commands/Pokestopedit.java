@@ -86,6 +86,8 @@ public class Pokestopedit extends CommandBase {
                 AnotherPokeStop.getCurrentEditor().put(p.getUniqueID(), position);
                 p.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &6Position saved. Click on Pokestop to edit."));
 
+            } else {
+                p.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &4Invalid arguments!"));
             }
 
         } else {

@@ -23,8 +23,11 @@ public class LootTableConfig extends Config {
     public String cooldown = "24h";
 
     @Order(3)
-    @Comment("Default LootTableConfig for Pokestop")
+    @Comment("Default Loottable for Pokestop")
     public List<LootTableData> lootData = new ArrayList<>();
+
+    @Order(4)
+    @Comment("Default Loottable for Rocket Encounters")
     public List<RocketTableData> rocketData = new ArrayList<>();
 
     public LootTableConfig() {

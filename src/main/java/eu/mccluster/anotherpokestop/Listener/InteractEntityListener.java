@@ -203,7 +203,7 @@ public class InteractEntityListener {
         EntityPlayerMP p = event.getPlayer();
         if(AnotherPokeStop.getCurrentDrops().containsKey(p.getUniqueID())) {
             int slotIndex = event.getIndex();
-            if(AnotherPokeStop.getCurrentDrops().get(p.getUniqueID()).get(slotIndex).getItem() == Item.getByNameOrId(_config.commandItem)) {
+            if(AnotherPokeStop.getCurrentDrops().get(p.getUniqueID()).get(slotIndex).getItem() == Item.getByNameOrId(_config.commandItem) || AnotherPokeStop.getCurrentDrops().get(p.getUniqueID()).get(slotIndex).getItem() == Item.getByNameOrId("pixelmon:pixelmon_sprite")) {
                 MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
                 server.getCommandManager().executeCommand(server, AnotherPokeStop.getCurrentCommandDrops().get(p.getUniqueID()).get(slotIndex));
                 return;
@@ -217,7 +217,7 @@ public class InteractEntityListener {
         EntityPlayerMP p = event.getPlayer();
         if(AnotherPokeStop.getCurrentDrops().containsKey(p.getUniqueID()) && _config.claimRewardsOnClose) {
             for(int i = 0; i < AnotherPokeStop.getCurrentDrops().get(p.getUniqueID()).size(); i++) {
-                if(AnotherPokeStop.getCurrentDrops().get(p.getUniqueID()).get(i).getItem() == Item.getByNameOrId(_config.commandItem)) {
+                if(AnotherPokeStop.getCurrentDrops().get(p.getUniqueID()).get(i).getItem() == Item.getByNameOrId(_config.commandItem) || AnotherPokeStop.getCurrentDrops().get(p.getUniqueID()).get(i).getItem() == Item.getByNameOrId("pixelmon:pixelmon_sprite")) {
                     MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
                     server.getCommandManager().executeCommand(server, AnotherPokeStop.getCurrentCommandDrops().get(p.getUniqueID()).get(i));
                 } else {
