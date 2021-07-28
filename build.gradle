@@ -104,4 +104,5 @@ processResources{
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mods.toml'
     }
+    [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 }

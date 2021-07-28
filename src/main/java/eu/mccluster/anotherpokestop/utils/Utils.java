@@ -2,18 +2,17 @@ package eu.mccluster.anotherpokestop.utils;
 
 import com.pixelmonmod.pixelmon.api.drops.CustomDropScreen;
 import com.pixelmonmod.pixelmon.api.enums.EnumPositionTriState;
-import com.pixelmonmod.pixelmon.config.PixelmonItems;
 import eu.mccluster.anotherpokestop.AnotherPokeStop;
 import eu.mccluster.anotherpokestop.AnotherPokeStopPlugin;
 import eu.mccluster.anotherpokestop.config.PlayerData;
 import eu.mccluster.anotherpokestop.config.loottables.LootTableStart;
+import eu.mccluster.anotherpokestop.config.lureModule.LureModuleConfig;
+import eu.mccluster.anotherpokestop.config.presets.PresetConfig;
+import eu.mccluster.anotherpokestop.config.presets.PresetTrainer;
 import eu.mccluster.anotherpokestop.config.trainerConfig.TrainerBaseConfig;
 import eu.mccluster.anotherpokestop.objects.PlayerCooldowns;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.server.permission.PermissionAPI;
 
 import java.io.File;
@@ -28,12 +27,6 @@ public class Utils {
         return TextSerializer.parse(text);
     }
 
-
-    public static ItemStack itemStackFromType(String itemName, int quantity) {
-        ItemStack itemStack = GameRegistry.makeItemStack(itemName, 0, quantity, null);
-        return itemStack;
-    }
-
     public static void dropScreen(String title, String text, EntityPlayerMP p, List<net.minecraft.item.ItemStack> items) {
         CustomDropScreen.builder()
                 .setTitle(Utils.toText(Placeholders.regex(title)))
@@ -46,10 +39,35 @@ public class Utils {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 
-    public static TrainerBaseConfig getTrainerByName(String name) {
-        TrainerBaseConfig configFile = new TrainerBaseConfig(new File(AnotherPokeStopPlugin.getInstance().getDataFolder(), name + ".conf"));
+    public static TrainerBaseConfig getTrainer(UUID pokestop) {
+
+        String trainer;
+        List<PresetTrainer> _presetTrainers = AnotherPokeStop.getRegisteredPokeStops().get(pokestop).getTrainer();
+        int trainerSize = _presetTrainers.size();
+        int listEntry = -1;
+
+        if(trainerSize > 1) {
+            int raritySum = _presetTrainers.stream().mapToInt(presetTrainers -> presetTrainers.rarity).sum();
+            int pickedRarity = (int) (raritySum * Math.random());
+            for(int t = 0; t < pickedRarity;) {
+                listEntry = listEntry + 1;
+                t = _presetTrainers.get(listEntry).rarity + t;
+            }
+            trainer = _presetTrainers.get(listEntry).trainer;
+        } else {
+            trainer = _presetTrainers.get(0).trainer;
+        }
+
+        TrainerBaseConfig configFile = new TrainerBaseConfig(new File(AnotherPokeStop.getInstance().getTrainerFolder(), trainer + ".conf"));
         configFile.load();
         return configFile;
+    }
+
+    public static String getLureType(String lure) {
+
+        String configName = lure.replaceAll("pixelmon:lure_", "");
+        String cleanedConfigName = configName.replaceAll("_strong", "");
+        return capitalizeFirstLetter(cleanedConfigName.trim());
     }
 
     public static boolean hasPermission(EntityPlayerMP player, String permissionNode) {
@@ -58,10 +76,11 @@ public class Utils {
 
     public static boolean claimable(EntityPlayerMP player, UUID pokestopID, String lootTable) {
 
-        String playerID = player.getUniqueID().toString();
-        final String path = AnotherPokeStop.getInstance().getPlayerFolder() + playerID + ".conf";
+        String playerUUID = player.getUniqueID().toString();
+        final String path = AnotherPokeStop.getInstance().getPlayerFolder() + playerUUID + ".conf";
         Date time = new Date();
 
+        //Creates a new file when the player never used a pokestop before
         if (Files.notExists(Paths.get(path))) {
             PlayerCooldowns playerCooldowns = new PlayerCooldowns(pokestopID, time);
             PlayerData newPlayerData = new PlayerData(new File(path));
@@ -76,6 +95,7 @@ public class Utils {
         LootTableStart lootData = new LootTableStart(new File(AnotherPokeStop.getInstance().getLootFolder(), lootTable + ".conf"));
         lootData.load();
 
+        //Scanning through the player file, if no cooldown present set a new entry
         int entrySum = playerData.playerCooldowns.size();
         int index = 0;
         PlayerCooldowns playerCooldowns = new PlayerCooldowns(pokestopID, time);
@@ -91,9 +111,9 @@ public class Utils {
             }
         }
 
+        //Check if the pokestop is still on cooldown
         long lastVisit = playerData.playerCooldowns.get(index).getDate().getTime();
         long remainingTime = time.getTime() - lastVisit;
-
         if (TimeUnit.MILLISECONDS.toMinutes(remainingTime) < Placeholders.parseCooldown(lootData.loottable.cooldown)) {
             return false;
         }
@@ -103,177 +123,13 @@ public class Utils {
         return true;
     }
 
-    public static LootTableStart getLoottable(String lootTable) {
-        if (AnotherPokeStop.getInstance()._avaiableLoottables.contains(lootTable)) {
-            LootTableStart lootData = new LootTableStart(new File(AnotherPokeStop.getInstance().getLootFolder(), lootTable + ".conf"));
-            lootData.load();
-            return lootData;
+    public static PresetConfig getPreset(String presetConfig) {
+        if (AnotherPokeStop.getInstance()._availablePresets.contains(presetConfig)) {
+            PresetConfig presetData = new PresetConfig(new File(AnotherPokeStop.getInstance().getPresetFolder(), presetConfig + ".conf"));
+            presetData.load();
+            return presetData;
         }
         return null;
-    }
-
-    public static List<ItemStack> genPokeStopLoot(EntityPlayerMP p, Boolean rocket, String lootTable) {
-
-        int raritySum;
-        List<ItemStack> outList = new ArrayList<>();
-        List<String> outCommandList = new ArrayList<>();
-        LootTableStart _loottable = Utils.getLoottable(lootTable);
-
-        if (!rocket) {
-            for (int s = 0; s < Objects.requireNonNull(_loottable).loottable.lootSize; s++) {
-                outCommandList.add("Placeholder");
-            }
-            raritySum = _loottable.loottable.lootData.stream().mapToInt(lootTableData -> lootTableData.lootRarity).sum();
-            for (int i = 0; i < _loottable.loottable.lootSize; i++) {
-                int pickedRarity = (int) (raritySum * Math.random());
-                int listEntry = -1;
-
-                for (int b = 0; b <= pickedRarity; ) {
-                    listEntry = listEntry + 1;
-                    b = _loottable.loottable.lootData.get(listEntry).lootRarity + b;
-
-                }
-
-                if (!_loottable.loottable.lootData.get(listEntry).loot.startsWith("command>")) {
-                    ItemStack rewardItem;
-                    if (!_loottable.loottable.lootData.get(listEntry).loot.contains("itemname>") || !_loottable.loottable.lootData.get(listEntry).loot.contains("sprite>")) {
-                        rewardItem = Utils.itemStackFromType(_loottable.loottable.lootData.get(listEntry).loot, _loottable.loottable.lootData.get(listEntry).lootAmount);
-                    } else {
-                        String[] itemName = _loottable.loottable.lootData.get(listEntry).loot.split("itemname>");
-                        if (itemName[0].contains("sprite>")) {
-                            String[] cleanedItem = itemName[0].split("sprite>");
-                            rewardItem = Utils.itemStackFromType(cleanedItem[0].trim(), _loottable.loottable.lootData.get(listEntry).lootAmount);
-                        } else {
-                            rewardItem = Utils.itemStackFromType(itemName[0].trim(), _loottable.loottable.lootData.get(listEntry).lootAmount);
-                        }
-                        rewardItem.setStackDisplayName(Placeholders.regex(itemName[1]));
-                    }
-                    outList.add(rewardItem);
-
-                } else {
-                    String command;
-                    String sprite;
-                    ItemStack rewardCommandItem;
-
-                    if (!_loottable.loottable.lootData.get(listEntry).loot.contains("sprite>")) {
-                        rewardCommandItem = Utils.itemStackFromType(AnotherPokeStop.getConfig().config.commandItem, 1);
-                    } else {
-                        String[] splitOne = _loottable.loottable.lootData.get(listEntry).loot.split("itemname>");
-                        String[] splitTwo = splitOne[0].split("sprite>");
-                        sprite = splitTwo[1].trim();
-                        rewardCommandItem = new ItemStack(PixelmonItems.itemPixelmonSprite, 1);
-                        NBTTagCompound tagCompound = new NBTTagCompound();
-                        rewardCommandItem.setTagCompound(tagCompound);
-                        tagCompound.setShort("ndex", Short.parseShort(sprite));
-                    }
-                    if (!_loottable.loottable.lootData.get(listEntry).loot.contains("itemname>") && !_loottable.loottable.lootData.get(listEntry).loot.contains("sprite>")) {
-                        command = Placeholders.parseCommand(Placeholders.parceCustomItemName(Placeholders.parsePlayerPlaceholder(_loottable.loottable.lootData.get(listEntry).loot, p)));
-                        rewardCommandItem.setStackDisplayName(command);
-                    } else {
-                        String[] itemName;
-                        String[] commandString;
-                        String cleanedCommand;
-
-                        if (_loottable.loottable.lootData.get(listEntry).loot.contains("sprite>")) {
-                            commandString = _loottable.loottable.lootData.get(listEntry).loot.split("sprite>");
-                            cleanedCommand = Placeholders.parseCommand(Placeholders.parsePlayerPlaceholder(commandString[0], p));
-                        } else {
-                            cleanedCommand = _loottable.loottable.lootData.get(listEntry).loot;
-                        }
-                        if (_loottable.loottable.lootData.get(listEntry).loot.contains("itemname>")) {
-                            itemName = _loottable.loottable.lootData.get(listEntry).loot.split("itemname>");
-                            rewardCommandItem.setStackDisplayName(Placeholders.regex(itemName[1]));
-
-                            commandString = cleanedCommand.split("itemname>");
-                            cleanedCommand = Placeholders.parseCommand(Placeholders.parsePlayerPlaceholder(commandString[0], p));
-                        } else {
-                            rewardCommandItem.setStackDisplayName(cleanedCommand);
-                        }
-                        command = cleanedCommand.trim();
-                    }
-                    outList.add(rewardCommandItem);
-                    outCommandList.set(i, command);
-                }
-            }
-        } else {
-            for(int s = 0; s < Objects.requireNonNull(_loottable).loottable.rocketLootSize; s++) {
-                outCommandList.add("Placeholder");
-            }
-            raritySum = _loottable.loottable.rocketData.stream().mapToInt(rocketTableData -> rocketTableData.lootRarity).sum();
-            for (int i = 0; i < _loottable.loottable.rocketLootSize; i++) {
-                int pickedRarity = (int) (raritySum * Math.random());
-                int listEntry = -1;
-
-                for (int b = 0; b <= pickedRarity; ) {
-                    listEntry = listEntry + 1;
-                    b = _loottable.loottable.rocketData.get(listEntry).lootRarity + b;
-
-                }
-
-                if(!_loottable.loottable.rocketData.get(listEntry).loot.startsWith("command>")) {
-                    ItemStack rewardItem;
-                    if(!_loottable.loottable.rocketData.get(listEntry).loot.contains("itemname>") || !_loottable.loottable.rocketData.get(listEntry).loot.contains("sprite>")) {
-                        rewardItem = Utils.itemStackFromType(_loottable.loottable.rocketData.get(listEntry).loot, _loottable.loottable.rocketData.get(listEntry).lootAmount);
-                    } else {
-                        String[] itemName = _loottable.loottable.rocketData.get(listEntry).loot.split("itemname>");
-                        if(itemName[0].contains("sprite>")) {
-                            String[] cleanedItem = itemName[0].split("sprite>");
-                            rewardItem = Utils.itemStackFromType(cleanedItem[0].trim(), _loottable.loottable.rocketData.get(listEntry).lootAmount);
-                        } else {
-                            rewardItem = Utils.itemStackFromType(itemName[0].trim(), _loottable.loottable.rocketData.get(listEntry).lootAmount);
-                        }
-                        rewardItem.setStackDisplayName(Placeholders.regex(itemName[1]));
-                    }
-                    outList.add(rewardItem);
-
-                } else {
-                    String command;
-                    String sprite;
-                    ItemStack rewardCommandItem;
-
-                    if (!_loottable.loottable.rocketData.get(listEntry).loot.contains("sprite>")) {
-                        rewardCommandItem = Utils.itemStackFromType(AnotherPokeStop.getConfig().config.commandItem, 1);
-                    } else {
-                        String[] splitOne = _loottable.loottable.rocketData.get(listEntry).loot.split("itemname>");
-                        String[] splitTwo = splitOne[0].split("sprite>");
-                        sprite = splitTwo[1].trim();
-                        rewardCommandItem = new ItemStack(PixelmonItems.itemPixelmonSprite, 1);
-                        NBTTagCompound tagCompound = new NBTTagCompound();
-                        rewardCommandItem.setTagCompound(tagCompound);
-                        tagCompound.setShort("ndex", Short.parseShort(sprite));
-                    }
-                    if (!_loottable.loottable.rocketData.get(listEntry).loot.contains("itemname>") && !_loottable.loottable.rocketData.get(listEntry).loot.contains("sprite>")) {
-                        command = Placeholders.parseCommand(Placeholders.parceCustomItemName(Placeholders.parsePlayerPlaceholder(_loottable.loottable.rocketData.get(listEntry).loot, p)));
-                        rewardCommandItem.setStackDisplayName(command);
-                    } else {
-                        String[] itemName;
-                        String[] commandString;
-                        String cleanedCommand;
-
-                        if (_loottable.loottable.rocketData.get(listEntry).loot.contains("sprite>")) {
-                            commandString = _loottable.loottable.rocketData.get(listEntry).loot.split("sprite>");
-                            cleanedCommand = Placeholders.parseCommand(Placeholders.parsePlayerPlaceholder(commandString[0], p));
-                        } else {
-                            cleanedCommand = _loottable.loottable.rocketData.get(listEntry).loot;
-                        }
-                        if (_loottable.loottable.rocketData.get(listEntry).loot.contains("itemname>")) {
-                            itemName = _loottable.loottable.rocketData.get(listEntry).loot.split("itemname>");
-                            rewardCommandItem.setStackDisplayName(Placeholders.regex(itemName[1]));
-
-                            commandString = cleanedCommand.split("itemname>");
-                            cleanedCommand = Placeholders.parseCommand(Placeholders.parsePlayerPlaceholder(commandString[0], p));
-                        } else {
-                            rewardCommandItem.setStackDisplayName(cleanedCommand);
-                        }
-                        command = cleanedCommand.trim();
-                    }
-                    outList.add(rewardCommandItem);
-                    outCommandList.set(i, command);
-                }
-            }
-        }
-        AnotherPokeStop.getCurrentCommandDrops().put(p.getUniqueID(), outCommandList);
-        return outList;
     }
 }
 

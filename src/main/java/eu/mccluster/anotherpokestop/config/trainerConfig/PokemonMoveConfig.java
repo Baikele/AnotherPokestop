@@ -8,16 +8,16 @@ import java.io.File;
 public class PokemonMoveConfig  extends Config {
 
     @Order(1)
-    public String move1 = "Flare Blitz";
+    public String move1 = "Shadow Sneak";
 
     @Order(2)
-    public String move2 = "Recover";
+    public String move2 = "Spectral Thief";
 
     @Order(3)
-    public String move3 = "Iron Head";
+    public String move3 = "Close Combat";
 
     @Order(4)
-    public String move4 = "Toxic";
+    public String move4 = "Rock Tomb";
 
     @Override
     public File getFile() {

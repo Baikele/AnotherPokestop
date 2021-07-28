@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 //https://gist.github.com/TheKnightKarim/ac27f8fd29ec28f9100d0d6428044a2f
+
 public class TextSerializer {
 
     private static final int FORMATTING_CODE_LENGTH = 2;

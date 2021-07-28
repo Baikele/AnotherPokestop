@@ -39,6 +39,7 @@ public class TrainerObject {
         if(trainerBaseConfig == null) {
             return;
         }
+
         this._player = player;
         AnotherPokeStop.getCurrentBattles().put(player, this);
         AnotherPokeStop.getPokestopLoot().put(player, lootTable);
@@ -92,8 +93,10 @@ public class TrainerObject {
     }
 
     private Pokemon createPokemon(TrainerPokemonConfig config) {
+
         EnumSpecies species = EnumSpecies.getFromNameAnyCase(config.name);
         Pokemon pkm = Pixelmon.pokemonFactory.create(species);
+
         //Setting IVs
         pkm.getIVs().setStat(StatsType.HP, config.ivs.hp);
         pkm.getIVs().setStat(StatsType.Attack, config.ivs.atk);
@@ -101,6 +104,7 @@ public class TrainerObject {
         pkm.getIVs().setStat(StatsType.SpecialAttack, config.ivs.spAtk);
         pkm.getIVs().setStat(StatsType.SpecialDefence, config.ivs.spDef);
         pkm.getIVs().setStat(StatsType.Speed, config.ivs.init);
+
         //Setting EVs
         pkm.getEVs().setStat(StatsType.HP, config.evs.hp);
         pkm.getEVs().setStat(StatsType.Attack, config.evs.atk);
@@ -108,6 +112,7 @@ public class TrainerObject {
         pkm.getEVs().setStat(StatsType.SpecialAttack, config.evs.spAtk);
         pkm.getEVs().setStat(StatsType.SpecialDefence, config.evs.spDef);
         pkm.getEVs().setStat(StatsType.Speed, config.evs.init);
+
         //Setting Moves
         Attack move1 = new Attack(config.moves.move1);
         Attack move2 = new Attack(config.moves.move2);
@@ -117,19 +122,27 @@ public class TrainerObject {
         pkm.getMoveset().set(1, move2);
         pkm.getMoveset().set(2, move3);
         pkm.getMoveset().set(3, move4);
+
         //Setting Level and other stuff
         pkm.setLevel(config.level);
         pkm.setShiny(config.shiny);
         pkm.setAbility(config.ability);
+
         if(!(config.nickname.isEmpty()))
             pkm.setNickname(config.nickname);
+
+        if(config.form > 0)
+                pkm.setForm(config.form);
+
         pkm.setNature(EnumNature.natureFromString(config.nature));
         pkm.setGrowth(EnumGrowth.growthFromString(config.growth));
         pkm.setHeldItem(GameRegistry.makeItemStack("pixelmon:" + config.item, 0, 1, null));
+
         if(config.canDynamax) {
             pkm.setGigantamaxFactor(true);
             pkm.setDynamaxLevel(10);
         }
+
         return pkm;
     }
 }

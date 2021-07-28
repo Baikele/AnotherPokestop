@@ -1,7 +1,6 @@
 package eu.mccluster.anotherpokestop.commands;
 
 import eu.mccluster.anotherpokestop.AnotherPokeStop;
-import eu.mccluster.anotherpokestop.config.AnotherPokeStopConfig;
 import eu.mccluster.anotherpokestop.utils.Utils;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -9,10 +8,10 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 
-public class RemovePokeStop extends CommandBase {
+import java.util.ArrayList;
+import java.util.List;
 
-    AnotherPokeStop _plugin = AnotherPokeStop.getInstance();
-    AnotherPokeStopConfig _config = AnotherPokeStop.getConfig().config;
+public class RemovePokeStop extends CommandBase {
 
     @Override
     public String getName() {
@@ -37,13 +36,10 @@ public class RemovePokeStop extends CommandBase {
             return;
         }
         EntityPlayerMP p = (EntityPlayerMP) sender;
-        if(_plugin._currentPokestopRemovers.contains(p.getUniqueID())) {
-            _plugin._currentPokestopRemovers.remove(p.getUniqueID());
-            p.sendMessage(Utils.toText(_config.disableRemover));
-        } else {
-            _plugin._currentPokestopRemovers.add(p.getUniqueID());
-            p.sendMessage(Utils.toText(_config.enableRemover));
-        }
-
+        List<String> remover = new ArrayList<>();
+        remover.add("remove");
+        AnotherPokeStop.getCurrentEditor().put(p.getUniqueID(), remover);
+        p.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &4Click Pokestop to remove."));
     }
+
 }

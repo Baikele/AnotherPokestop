@@ -1,9 +1,12 @@
 package eu.mccluster.anotherpokestop.commands;
 
 import com.pixelmonmod.pixelmon.entities.EntityPokestop;
+import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import eu.mccluster.anotherpokestop.AnotherPokeStop;
-import eu.mccluster.anotherpokestop.config.AnotherPokeStopConfig;
-import eu.mccluster.anotherpokestop.objects.LoottableStorage;
+import eu.mccluster.anotherpokestop.config.lang.LangConfig;
+import eu.mccluster.anotherpokestop.config.mainConfig.AnotherPokeStopConfig;
+import eu.mccluster.anotherpokestop.config.presets.PresetConfig;
+import eu.mccluster.anotherpokestop.config.presets.PresetTrainer;
 import eu.mccluster.anotherpokestop.objects.PokeStopData;
 import eu.mccluster.anotherpokestop.objects.RGBStorage;
 import eu.mccluster.anotherpokestop.utils.Utils;
@@ -12,13 +15,14 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import java.util.List;
 
 
 public class SetPokeStop extends CommandBase {
 
-    AnotherPokeStopConfig _config = AnotherPokeStop.getConfig().config;
+    LangConfig _lang = AnotherPokeStop.getLang();
 
 
     @Override
@@ -33,7 +37,7 @@ public class SetPokeStop extends CommandBase {
 
     @Override
     public String getUsage(ICommandSender sender) {
-        return "/setpokestop <R> <G> <B> <Loottable>";
+        return "/setpokestop <Preset>";
     }
 
     @Override
@@ -44,80 +48,58 @@ public class SetPokeStop extends CommandBase {
         }
 
         EntityPlayerMP p = (EntityPlayerMP) sender;
-        RGBStorage rgbStorage;
-        LoottableStorage loottableStorage;
+        RGBStorage color;
+        RGBStorage cooldownColor;
+        String loottable;
+        List<PresetTrainer> trainer;
+        PresetConfig _preset;
 
-        if(args.length > 4 || args.length == 2) {
-            p.sendMessage(Utils.toText("/setpokestop <R> <G> <B> <Loottable>"));
+        if(args.length > 1) {
+            p.sendMessage(Utils.toText("/setpokestop <Preset>"));
             return;
         }
-        if(args.length == 4) {
-            int _r = Integer.parseInt(args[0]);
-            int _g = Integer.parseInt(args[1]);
-            int _b = Integer.parseInt(args[2]);
-            String lootTable = args[3];
-            if(_r > 255 || _g > 255 || _b > 255) {
-                p.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &4RGB Limit is 255"));
+
+        //Loading settings from preset
+        if(args.length == 1) {
+            _preset = Utils.getPreset(args[0]);
+
+            if (_preset == null) {
+                p.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &4Preset not found."));
                 return;
             }
-            if(_r < 0 || _g < 0 || _b < 0) {
-                p.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &4RGB Minimum is 0"));
-                return;
-            }
-            rgbStorage = new RGBStorage(_r, _g, _b);
-
-            boolean checklootTable = AnotherPokeStop.getInstance()._avaiableLoottables.contains(lootTable);
-            if(checklootTable) {
-                loottableStorage = new LoottableStorage(lootTable);
-            } else {
-                p.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &4Loottable not found."));
-                return;
-            }
-
-        } else if(args.length == 3) {
-
-            int _r = Integer.parseInt(args[0]);
-            int _g = Integer.parseInt(args[1]);
-            int _b = Integer.parseInt(args[2]);
-            if(_r > 255 || _g > 255 || _b > 255) {
-                p.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &4RGB Limit is 255"));
-                return;
-            }
-            if(_r < 0 || _g < 0 || _b < 0) {
-                p.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &4RGB Minimum is 0"));
-                return;
-            }
-            rgbStorage = new RGBStorage(_r, _g, _b);
-            loottableStorage = new LoottableStorage("DefaultLootConfig");
-
-        } else if(args.length == 1){
-
-            String lootTable = args[0];
-            rgbStorage = new RGBStorage(_config.standardColors.red, _config.standardColors.green, _config.standardColors.blue);
-            boolean checklootTable = AnotherPokeStop.getInstance()._avaiableLoottables.contains(lootTable);
-            if(checklootTable) {
-                loottableStorage = new LoottableStorage(lootTable);
-            } else {
-                p.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &4Loottable not found."));
-                return;
-            }
-
         } else {
-            rgbStorage = new RGBStorage(_config.standardColors.red, _config.standardColors.green, _config.standardColors.blue);
-            loottableStorage = new LoottableStorage("DefaultLootConfig");
+            _preset = AnotherPokeStop.getPreset();
+        }
+        color = new RGBStorage(_preset.red, _preset.green, _preset.blue);
+        cooldownColor = new RGBStorage(_preset.cooldownRed, _preset.cooldownGreen, _preset.cooldownBlue);
+
+        if(AnotherPokeStop.getInstance()._availableLoottables.contains(_preset.loottable)) {
+            loottable = _preset.loottable;
+        } else {
+            p.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &4Invalid Loottable, check your configs!"));
+            return;
         }
 
+        for(int i = 0; i < _preset.trainerList.size(); i++) {
+            if(!AnotherPokeStop.getInstance()._availableTrainer.contains(_preset.trainerList.get(i).trainer)) {
+                p.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &4Invalid Trainer, check your configs!"));
+                return;
+            }
+        }
+            trainer = _preset.trainerList;
+
+        //Creating Pokestop
         World playerWorld = p.getEntityWorld();
         EntityPokestop pokestop = new EntityPokestop(playerWorld, p.posX, p.posY, p.posZ);
-        pokestop.setColor(rgbStorage.getR(), rgbStorage.getG(), rgbStorage.getB());
+        pokestop.setColor(color.getR(), color.getG(), color.getB());
         pokestop.setAlwaysAnimate(true);
         pokestop.setNoGravity(true);
-        pokestop.setCubeRange(_config.cubeRange);
-        pokestop.setSize(_config.pokestopSize);
+        pokestop.setCubeRange(_preset.cubeRange);
+        pokestop.setSize(_preset.pokestopSize);
         playerWorld.spawnEntity(pokestop);
-        p.sendMessage(Utils.toText(_config.setText));
+        p.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &6New Pokestop set."));
 
-        PokeStopData newPokeStopData = new PokeStopData(pokestop.getUniqueID(), rgbStorage, playerWorld, p.posX, p.posY, p.posZ, loottableStorage);
+        PokeStopData newPokeStopData = new PokeStopData(pokestop.getUniqueID(), color, cooldownColor, playerWorld, p.posX, p.posY, p.posZ, loottable, trainer);
         AnotherPokeStop.getRegisteredPokeStops().put(pokestop.getUniqueID(), newPokeStopData);
         AnotherPokeStop.getRegistry().registryList.add(newPokeStopData);
         AnotherPokeStop.getInstance().saveRegistry();

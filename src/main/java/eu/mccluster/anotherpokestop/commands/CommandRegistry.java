@@ -8,7 +8,6 @@ public class CommandRegistry {
         event.registerServerCommand(new Apsreload());
         event.registerServerCommand(new RemovePokeStop());
         event.registerServerCommand(new SetPokeStop());
-        event.registerServerCommand(new SetPokeStopDummy());
         event.registerServerCommand(new Pokestopedit());
     }
 }

@@ -1,4 +1,4 @@
-package eu.mccluster.anotherpokestop.Listener;
+package eu.mccluster.anotherpokestop.listeners;
 
 import com.pixelmonmod.pixelmon.api.events.BattleStartedEvent;
 import eu.mccluster.anotherpokestop.AnotherPokeStop;

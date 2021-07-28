@@ -1,7 +1,10 @@
 package eu.mccluster.anotherpokestop.utils;
 
+import com.pixelmonmod.pixelmon.enums.EnumTrainerAI;
 import eu.mccluster.anotherpokestop.AnotherPokeStop;
 import eu.mccluster.anotherpokestop.config.PlayerData;
+import eu.mccluster.anotherpokestop.config.lang.LangConfig;
+import eu.mccluster.anotherpokestop.config.lang.LangTypes;
 import eu.mccluster.anotherpokestop.config.loottables.LootTableStart;
 import eu.mccluster.anotherpokestop.objects.PlayerCooldowns;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -28,6 +31,70 @@ public class Placeholders {
 
     public static String parsePlayerPlaceholder(String text, EntityPlayerMP player) {
         text = text.replaceAll("%player%", player.getName());
+        return regex(text);
+    }
+
+    public static String parseLureInfos(String text, String lureType, int cost) {
+        LangConfig _lang = AnotherPokeStop.getLang();
+        String lure;
+        switch(lureType.toUpperCase()) {
+            case "NORMAL":
+                lure = _lang.langTypes.normal;
+                break;
+            case "FIGHTING":
+                lure = _lang.langTypes.fighting;
+                break;
+            case "FLYING":
+                lure = _lang.langTypes.flying;
+                break;
+            case "POISON":
+                lure = _lang.langTypes.poison;
+                break;
+            case "GROUND":
+                lure = _lang.langTypes.ground;
+                break;
+            case "ROCK":
+                lure = _lang.langTypes.rock;
+                break;
+            case "BUG":
+                lure = _lang.langTypes.bug;
+                break;
+            case "GHOST":
+                lure = _lang.langTypes.ghost;
+                break;
+            case "STEEL":
+                lure = _lang.langTypes.steel;
+                break;
+            case "FIRE":
+                lure = _lang.langTypes.fire;
+                break;
+            case "WATER":
+                lure = _lang.langTypes.water;
+                break;
+            case "GRASS":
+                lure = _lang.langTypes.grass;
+                break;
+            case "ELECTRIC":
+                lure = _lang.langTypes.electric;
+                break;
+            case "PSYCHIC":
+                lure = _lang.langTypes.psychic;
+                break;
+            case "ICE":
+                lure = _lang.langTypes.ice;
+                break;
+            case "DRAGON":
+                lure = _lang.langTypes.dragon;
+                break;
+            case "DARK":
+                lure = _lang.langTypes.dark;
+                break;
+            default:
+                lure = _lang.langTypes.fairy;
+                break;
+        }
+        text = text.replaceAll("%type%", lure);
+        text = text.replaceAll("%money%", String.valueOf(cost));
         return regex(text);
     }
 
@@ -65,6 +132,8 @@ public class Placeholders {
         LootTableStart lootData = new LootTableStart(new File(AnotherPokeStop.getInstance().getLootFolder(), lootTable + ".conf"));
         lootData.load();
 
+        LangConfig _lang = AnotherPokeStop.getLang();
+
         int index = 0;
         PlayerCooldowns playerCooldowns = new PlayerCooldowns(pokestopID, time);
         int entrySum = playerData.playerCooldowns.size();
@@ -88,12 +157,12 @@ public class Placeholders {
             String cooldownMinutes = Long.toString(60L - (toMinutes - (TimeUnit.MILLISECONDS.toHours(remainingTime) * 60L)));
 
             if(toHours > 1L) {
-                hour = AnotherPokeStop.getConfig().config.pluralHour;
+                hour = _lang.langCooldown.pluralHour;
             } else {
-                hour = AnotherPokeStop.getConfig().config.singularHour;
+                hour = _lang.langCooldown.singularHour;
             }
             if(toMinutes < 58L && toMinutes != 0L) {
-                minute = AnotherPokeStop.getConfig().config.pluralMinute;
+                minute = _lang.langCooldown.pluralMinute;
             } else if(toMinutes == 0L) {
                 toHours = toHours + 1L;
                 cooldownHour = Long.toString(toHours);
@@ -101,31 +170,22 @@ public class Placeholders {
                 text = text.replaceAll("%cooldownpkstop%", cooldown);
                 return regex(text);
             } else {
-                minute = AnotherPokeStop.getConfig().config.singularMinute;
+                minute = _lang.langCooldown.singularMinute;
             }
-            cooldown = cooldownHour + " " + hour + " and " + cooldownMinutes + " " + minute;
+            cooldown = cooldownHour + " " + hour + " " + _lang.langCooldown.and + " " + cooldownMinutes + " " + minute;
             text = text.replaceAll("%cooldownpkstop%", cooldown);
             return regex(text);
         }
 
         if(toMinutes > 1L) {
-            minute = AnotherPokeStop.getConfig().config.pluralMinute;
+            minute = _lang.langCooldown.pluralMinute;
         } else {
-            minute = AnotherPokeStop.getConfig().config.singularMinute;
+            minute = _lang.langCooldown.singularMinute;
         }
         cooldown = Long.toString(configCooldown - toMinutes);
         text = text.replaceAll("%cooldownpkstop%", cooldown + " " + minute);
         return regex(text);
     }
 
-    public static String parseCommand(String loot) {
-        loot = loot.replaceAll("command>", "");
-        return loot;
-    }
-
-    public static String parceCustomItemName(String itemname) {
-        itemname = itemname.replaceAll("itemname>", "");
-        return itemname;
-    }
 
 }

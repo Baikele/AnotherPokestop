@@ -17,30 +17,33 @@ public class TrainerPokemonConfig extends Config {
     public boolean shiny = true;
 
     @Order(4)
-    public String nature = "Adamant";
+    public int form = 1;
 
     @Order(5)
-    public int level = 100;
+    public String nature = "Adamant";
 
     @Order(6)
-    public String item = "leftovers";
+    public int level = 100;
 
     @Order(7)
-    public String ability = "Sturdy";
+    public String item = "leftovers";
 
     @Order(8)
-    public String growth = "Runt";
+    public String ability = "Sturdy";
 
     @Order(9)
-    public boolean canDynamax = true;
+    public String growth = "Runt";
 
     @Order(10)
-    public PokemonStatConfig ivs = new PokemonStatConfig(31, 31, 31 ,0, 31, 31);
+    public boolean canDynamax = true;
 
     @Order(11)
-    public PokemonStatConfig evs = new PokemonStatConfig(0, 252, 6, 0, 0, 252);
+    public PokemonStatConfig ivs = new PokemonStatConfig(31, 31, 31 ,0, 31, 31);
 
     @Order(12)
+    public PokemonStatConfig evs = new PokemonStatConfig(0, 252, 6, 0, 0, 252);
+
+    @Order(13)
     public PokemonMoveConfig moves = new PokemonMoveConfig();
 
     @Override

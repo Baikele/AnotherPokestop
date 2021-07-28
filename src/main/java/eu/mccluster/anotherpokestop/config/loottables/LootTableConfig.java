@@ -28,12 +28,12 @@ public class LootTableConfig extends Config {
 
     @Order(4)
     @Comment("Default Loottable for Rocket Encounters")
-    public List<RocketTableData> rocketData = new ArrayList<>();
+    public List<LootTableData> rocketData = new ArrayList<>();
 
     public LootTableConfig() {
 
         lootData.add(new LootTableData());
-        rocketData.add(new RocketTableData());
+        rocketData.add(new LootTableData());
     }
 
 

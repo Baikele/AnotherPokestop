@@ -1,4 +1,4 @@
-package eu.mccluster.anotherpokestop.Listener;
+package eu.mccluster.anotherpokestop.listeners;
 
 import eu.mccluster.anotherpokestop.AnotherPokeStop;
 import net.minecraft.entity.player.EntityPlayerMP;
