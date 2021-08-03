@@ -8,14 +8,12 @@ import eu.mccluster.anotherpokestop.objects.PokeStopData;
 import eu.mccluster.anotherpokestop.objects.RGBStorage;
 import net.minecraft.entity.player.EntityPlayerMP;
 
-import java.util.List;
-
 
 public class EditUtils {
 
     public static void editPokestop(String edit, EntityPokestop pokestop, EntityPlayerMP player, int index) {
 
-        PokeStopRegistry _registry = AnotherPokeStop.getRegistry();
+        PokeStopRegistry _registry = AnotherPokeStop.getNewRegistry();
 
         switch(edit.toUpperCase()) {
 
@@ -49,7 +47,7 @@ public class EditUtils {
                 RGBStorage rgbStorage = new RGBStorage(_registry.registryList.get(index).getColor().getR(), _registry.registryList.get(index).getColor().getG(), _registry.registryList.get(index).getColor().getB());
                 RGBStorage cooldownColor = new RGBStorage(_registry.registryList.get(index).getCooldownColor().getR(), _registry.registryList.get(index).getCooldownColor().getG(), _registry.registryList.get(index).getCooldownColor().getB());
                 pokestop.setPositionAndRotation(x, y ,z, pokestop.rotationYaw, pokestop.rotationPitch);
-                PokeStopData pokeStopData = new PokeStopData(pokestop.getUniqueID(), rgbStorage, cooldownColor, pokestop.getEntityWorld(), x, y, z, _registry.registryList.get(index).getLoottable(), _registry.registryList.get(index).getTrainer());
+                PokeStopData pokeStopData = new PokeStopData(pokestop.getUniqueID(), _registry.registryList.get(index).getVersion(), rgbStorage, cooldownColor, _registry.registryList.get(index).getWorld(), x, y, z, _registry.registryList.get(index).getLoottable(), _registry.registryList.get(index).getTrainer());
                 _registry.registryList.set(index, pokeStopData);
                 AnotherPokeStop.getInstance().saveRegistry();
                 player.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &6Moved pokestop to saved location."));
@@ -63,7 +61,7 @@ public class EditUtils {
                     String lootTable = AnotherPokeStop.getCurrentEditor().get(player.getUniqueID()).get(1);
                     rgbStorage = new RGBStorage(_registry.registryList.get(index).getColor().getR(), _registry.registryList.get(index).getColor().getG(), _registry.registryList.get(index).getColor().getB());
                     cooldownColor = new RGBStorage(_registry.registryList.get(index).getCooldownColor().getR(), _registry.registryList.get(index).getCooldownColor().getG(), _registry.registryList.get(index).getCooldownColor().getB());
-                    pokeStopData = new PokeStopData(pokestop.getUniqueID(), rgbStorage, cooldownColor, pokestop.getEntityWorld(), pokestop.posX, pokestop.posY, pokestop.posZ, lootTable, _registry.registryList.get(index).getTrainer());
+                    pokeStopData = new PokeStopData(pokestop.getUniqueID(), _registry.registryList.get(index).getVersion(), rgbStorage, cooldownColor, _registry.registryList.get(index).getWorld(), pokestop.posX, pokestop.posY, pokestop.posZ, lootTable, _registry.registryList.get(index).getTrainer());
                     _registry.registryList.set(index, pokeStopData);
                     AnotherPokeStop.getInstance().saveRegistry();
                 } else {
@@ -93,7 +91,7 @@ public class EditUtils {
 
                 rgbStorage = new RGBStorage(r, g, b);
                 cooldownColor = new RGBStorage(_registry.registryList.get(index).getCooldownColor().getR(), _registry.registryList.get(index).getCooldownColor().getG(), _registry.registryList.get(index).getCooldownColor().getB());
-                pokeStopData = new PokeStopData(pokestop.getUniqueID(), rgbStorage, cooldownColor, pokestop.getEntityWorld(), pokestop.posX, pokestop.posY, pokestop.posZ, _registry.registryList.get(index).getLoottable(), _registry.registryList.get(index).getTrainer());
+                pokeStopData = new PokeStopData(pokestop.getUniqueID(), _registry.registryList.get(index).getVersion(), rgbStorage, cooldownColor, _registry.registryList.get(index).getWorld(), pokestop.posX, pokestop.posY, pokestop.posZ, _registry.registryList.get(index).getLoottable(), _registry.registryList.get(index).getTrainer());
                 _registry.registryList.set(index, pokeStopData);
                 AnotherPokeStop.getInstance().saveRegistry();
             AnotherPokeStop.getCurrentEditor().remove(player.getUniqueID());
@@ -117,7 +115,7 @@ public class EditUtils {
 
                 rgbStorage = new RGBStorage(_registry.registryList.get(index).getColor().getR(), _registry.registryList.get(index).getColor().getG(), _registry.registryList.get(index).getColor().getB());
                 cooldownColor = new RGBStorage(r, g, b);
-                pokeStopData = new PokeStopData(pokestop.getUniqueID(), rgbStorage, cooldownColor, pokestop.getEntityWorld(), pokestop.posX, pokestop.posY, pokestop.posZ, _registry.registryList.get(index).getLoottable(), _registry.registryList.get(index).getTrainer());
+                pokeStopData = new PokeStopData(pokestop.getUniqueID(), _registry.registryList.get(index).getVersion(), rgbStorage, cooldownColor, _registry.registryList.get(index).getWorld(), pokestop.posX, pokestop.posY, pokestop.posZ, _registry.registryList.get(index).getLoottable(), _registry.registryList.get(index).getTrainer());
                 _registry.registryList.set(index, pokeStopData);
                 AnotherPokeStop.getInstance().saveRegistry();
                 AnotherPokeStop.getCurrentEditor().remove(player.getUniqueID());
@@ -136,7 +134,7 @@ public class EditUtils {
                 pokestop.setCubeRange(presetConfig.cubeRange);
                 pokestop.setSize(presetConfig.pokestopSize);
                 pokestop.setColor(presetConfig.red, presetConfig.green, presetConfig.blue);
-                pokeStopData = new PokeStopData(pokestop.getUniqueID(), rgbStorage, cooldownColor, pokestop.getEntityWorld(), pokestop.posX, pokestop.posY, pokestop.posZ, presetConfig.loottable, presetConfig.trainerList);
+                pokeStopData = new PokeStopData(pokestop.getUniqueID(), _registry.registryList.get(index).getVersion(), rgbStorage, cooldownColor, _registry.registryList.get(index).getWorld(), pokestop.posX, pokestop.posY, pokestop.posZ, presetConfig.loottable, presetConfig.trainerList);
                 _registry.registryList.set(index, pokeStopData);
                 AnotherPokeStop.getInstance().saveRegistry();
                 player.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &6Changed Preset to: " + AnotherPokeStop.getCurrentEditor().get(player.getUniqueID()).get(1)));

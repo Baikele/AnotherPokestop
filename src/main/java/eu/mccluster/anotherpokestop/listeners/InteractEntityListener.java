@@ -34,7 +34,6 @@ public class InteractEntityListener {
         _config = config;
         _registry = registry;
         _lang = lang;
-
     }
 
     @SubscribeEvent
@@ -57,32 +56,37 @@ public class InteractEntityListener {
         Item eventItem = event.getItemStack().getItem();
 
         if(_config.lureModules) {
+            if(eventItem == Item.getByNameOrId("lure_shiny_strong") || eventItem == Item.getByNameOrId("lure_ha_strong")) {
+                return;
+            }
             if (PixelmonItemsLures.strongLures.contains(eventItem)) {
-                if(eventItem == Item.getByNameOrId("lure_shiny_strong") || eventItem == Item.getByNameOrId("lure_ha_strong")) {
-                    return;
-                }
                 int index = PixelmonItemsLures.strongLures.indexOf(eventItem);
                 String lureType = Utils.getLureType(Objects.requireNonNull(PixelmonItemsLures.strongLures.get(index).getRegistryName()).toString());
-                DialogueUtils.genLureDialogue(pokestop, player, lureType, event.getItemStack())
+                String toggle = "Strong";
+                DialogueUtils.genLureDialogue(pokestop, player, lureType, event.getItemStack(), toggle)
                         .open(player);
                 return;
+            } else if(PixelmonItemsLures.weakLures.contains(eventItem)) {
+                int index = PixelmonItemsLures.weakLures.indexOf(eventItem);
+                String lureType = Utils.getLureType(Objects.requireNonNull(PixelmonItemsLures.weakLures.get(index).getRegistryName()).toString());
+                String toggle = "Weak";
+                DialogueUtils.genLureDialogue(pokestop, player, lureType, event.getItemStack(), toggle)
+                        .open(player);
             }
         }
 
         if(AnotherPokeStop.getCurrentEditor().containsKey(player.getUniqueID())) {
+            if(!AnotherPokeStop.getRegisteredPokeStops().containsKey(pokeStopId)) {
+                pokestop.setDead();
+                player.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &6Removed deprecated Pokestop."));
+                return;
+            }
             for (int i = 0; i <= _registry.registryList.size(); i++) {
-                if(i > 0) {
                     UUID registeredUUID = _registry.registryList.get(i).getPokeStopUniqueId();
                     if (registeredUUID.equals(pokeStopId)) {
                         EditUtils.editPokestop(AnotherPokeStop.getCurrentEditor().get(player.getUniqueID()).get(0), pokestop, player, i);
                         return;
                     }
-                }
-                if(!AnotherPokeStop.getRegisteredPokeStops().containsKey(pokeStopId)) {
-                    pokestop.setDead();
-                    player.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &6Removed deprecated Pokestop."));
-                    return;
-                }
             }
             return;
         }
@@ -132,9 +136,18 @@ public class InteractEntityListener {
 
                 MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
                 server.getCommandManager().executeCommand(server, AnotherPokeStop.getCurrentCommandDrops().get(p.getUniqueID()).get(slotIndex));
-                return;
+            } else {
+                p.inventory.addItemStackToInventory(AnotherPokeStop.getCurrentDrops().get(p.getUniqueID()).get(slotIndex));
             }
-            p.inventory.addItemStackToInventory(AnotherPokeStop.getCurrentDrops().get(p.getUniqueID()).get(slotIndex));
+            AnotherPokeStop.getCurrentLootSize().replace(p.getUniqueID(), AnotherPokeStop.getCurrentLootSize().get(p.getUniqueID()) - 1);
+
+            if(AnotherPokeStop.getCurrentLootSize().get(p.getUniqueID()) == 0) {
+                System.out.println("Wiping Lists");
+                AnotherPokeStop.getCurrentDrops().remove(p.getUniqueID());
+                AnotherPokeStop.getCurrentCommandDrops().remove(p.getUniqueID());
+                AnotherPokeStop.getCurrenDisplayItems().remove(p.getUniqueID());
+                AnotherPokeStop.getCurrentLootSize().remove(p.getUniqueID());
+            }
         }
     }
 
@@ -149,7 +162,6 @@ public class InteractEntityListener {
             for(int i = 0; i < AnotherPokeStop.getCurrentLootSize().get(p.getUniqueID()); i++) {
 
                 if(!AnotherPokeStop.getCurrentCommandDrops().get(p.getUniqueID()).get(i).equals("Placeholder")) {
-
                     MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
                     server.getCommandManager().executeCommand(server, AnotherPokeStop.getCurrentCommandDrops().get(p.getUniqueID()).get(i));
                 }
@@ -158,7 +170,10 @@ public class InteractEntityListener {
                     p.inventory.addItemStackToInventory(AnotherPokeStop.getCurrentDrops().get(p.getUniqueID()).get(i));
                 }
             }
+            AnotherPokeStop.getCurrentDrops().remove(p.getUniqueID());
+            AnotherPokeStop.getCurrentCommandDrops().remove(p.getUniqueID());
+            AnotherPokeStop.getCurrenDisplayItems().remove(p.getUniqueID());
+            AnotherPokeStop.getCurrentLootSize().remove(p.getUniqueID());
         }
     }
-
 }

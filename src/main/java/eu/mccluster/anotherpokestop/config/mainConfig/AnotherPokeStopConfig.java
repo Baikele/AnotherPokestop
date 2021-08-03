@@ -48,8 +48,16 @@ public class AnotherPokeStopConfig extends Config {
     @Comment("Time in seconds how long an animation cycle lasts")
     public int timePerRotation = 3;
 
+    @Order(9)
+    @Comment("Ignore this setting unless you have to migrate your Pokestops again!")
+    public boolean migrate = true;
+
     @Override
     public File getFile() {
         return _configFile;
+    }
+
+    public void changeMigration() {
+        migrate = false;
     }
 }

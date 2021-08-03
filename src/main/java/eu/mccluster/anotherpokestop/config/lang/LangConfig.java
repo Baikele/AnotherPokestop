@@ -16,7 +16,7 @@ public class LangConfig extends Config {
     File _langFile;
 
     @Order(1)
-    @Comment("Message when a player lacks of the claim permission. Formatting Codes supported")
+    @Comment("Message when a player lacks of the claim permission")
     public String noClaimPermission = "You don't have permission to claim Pokestops!";
 
     @Order(2)

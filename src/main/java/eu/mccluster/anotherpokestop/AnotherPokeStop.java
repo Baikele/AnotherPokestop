@@ -1,6 +1,7 @@
 package eu.mccluster.anotherpokestop;
 
 import com.pixelmonmod.pixelmon.Pixelmon;
+import eu.mccluster.anotherpokestop.config.OldPokeStopRegistry;
 import eu.mccluster.anotherpokestop.config.lureModule.LureModuleConfig;
 import eu.mccluster.anotherpokestop.listeners.*;
 import eu.mccluster.anotherpokestop.commands.CommandRegistry;
@@ -10,8 +11,7 @@ import eu.mccluster.anotherpokestop.config.loottables.LootTableStart;
 import eu.mccluster.anotherpokestop.config.mainConfig.AnotherPokeStopConfig;
 import eu.mccluster.anotherpokestop.config.presets.PresetConfig;
 import eu.mccluster.anotherpokestop.config.trainerConfig.TrainerBaseConfig;
-import eu.mccluster.anotherpokestop.objects.PokeStopData;
-import eu.mccluster.anotherpokestop.objects.TrainerObject;
+import eu.mccluster.anotherpokestop.objects.*;
 import lombok.Getter;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -31,7 +31,9 @@ public class AnotherPokeStop {
     @Getter
     private static LootTableStart _lootConfig;
     @Getter
-    private static PokeStopRegistry _registry;
+    private static PokeStopRegistry _newRegistry;
+    @Getter
+    private static OldPokeStopRegistry _oldRegistry;
     @Getter
     private static TrainerBaseConfig _trainer;
     @Getter
@@ -115,6 +117,7 @@ public class AnotherPokeStop {
 
     public List<UUID> _activeLure = new ArrayList<>();
 
+    public List<OldPokeStopData> _oldData = new ArrayList<>();
 
     @Getter
     private static AnotherPokeStop _instance;
@@ -131,8 +134,8 @@ public class AnotherPokeStop {
 
     private void onEnable(FMLServerStartingEvent event) {
         _config = new AnotherPokeStopConfig(new File(AnotherPokeStopPlugin.getInstance().getDataFolder(), "AnotherPokeStop.conf"));
+        _config.load();
         _lootConfig = new LootTableStart(new File(_lootFolder, "DefaultLootConfig.conf"));
-        _registry = new PokeStopRegistry(new File(AnotherPokeStopPlugin.getInstance().getDataFolder(), "PokestopRegistry.conf"));
         _trainer = new TrainerBaseConfig(new File(_trainerFolder, "DefaultTrainerConfig.conf"));
         _lang = new LangConfig(new File(AnotherPokeStopPlugin.getInstance().getDataFolder(), "Lang.conf"));
         _preset = new PresetConfig(new File(_presetFolder, "DefaultPreset.conf"));
@@ -172,22 +175,30 @@ public class AnotherPokeStop {
         _dragon.load();
         _dark.load();
         _fairy.load();
-        _registry.load();
-        _config.load();
         _lootConfig.load();
         _preset.load();
         _trainer.load();
         _lang.load();
-        registerListeners();
-        CommandRegistry.registerCommands(event);
-        populatePokeStopHashMap();
         loadLoottables();
         loadPresets();
         loadTrainer();
+
+        if(new File(AnotherPokeStopPlugin.getInstance().getDataFolder(), "PokestopRegistry.conf").exists() && _config.migrate) {
+            _oldRegistry = new OldPokeStopRegistry(new File(AnotherPokeStopPlugin.getInstance().getDataFolder(), "PokestopRegistry.conf"));
+            _oldRegistry.load();
+            migratePokestops();
+        } else {
+            _newRegistry = new PokeStopRegistry(new File(AnotherPokeStopPlugin.getInstance().getDataFolder(), "PokestopRegistry.conf"));
+            _newRegistry.load();
+            _config.changeMigration();
+        }
+        populatePokeStopHashMap();
+        registerListeners();
+        CommandRegistry.registerCommands(event);
     }
 
     public void onReload() {
-        _registry.load();
+        _newRegistry.load();
         _config.load();
         _lootConfig.load();
         _preset.load();
@@ -220,12 +231,12 @@ public class AnotherPokeStop {
 
 
     public void saveRegistry() {
-        _registry.save();
+        _newRegistry.save();
         populatePokeStopHashMap();
     }
 
     private void registerListeners() {
-        InteractEntityListener entityListener = new InteractEntityListener(this, _config, _registry, _lang);
+        InteractEntityListener entityListener = new InteractEntityListener(this, _config, _newRegistry, _lang);
         MinecraftForge.EVENT_BUS.register(new PlayerLeftListener(this));
         MinecraftForge.EVENT_BUS.register(new PokeStopFishingEvent());
         MinecraftForge.EVENT_BUS.register(entityListener);
@@ -276,9 +287,27 @@ public class AnotherPokeStop {
         }
     }
 
+    private void migratePokestops() {
+        _oldData.addAll(_oldRegistry.registryList);
+        boolean deleted = _oldRegistry.getFile().delete();
+        if(deleted) {
+            _newRegistry = new PokeStopRegistry(new File(AnotherPokeStopPlugin.getInstance().getDataFolder(), "PokestopRegistry.conf"));
+            _newRegistry.load();
+            int version = 2;
+            RGBStorage cooldownColor = new RGBStorage(_preset.cooldownRed, _preset.cooldownGreen, _preset.cooldownBlue);
+            for (OldPokeStopData oldAPS : _oldData) {
+                PokeStopData newData = new PokeStopData(oldAPS.getPokeStopUniqueId(), version, oldAPS.getColor(), cooldownColor, oldAPS.getWorld(), oldAPS.getPosX(), oldAPS.getPosY(), oldAPS.getPosZ(), oldAPS.getLoottable().getLoottable(), _preset.trainerList);
+                _newRegistry.registryList.add(newData);
+                _newRegistry.save();
+            }
+            _config.changeMigration();
+            _config.save();
+            System.out.println("Migration done!");
+        }
+    }
 
-    private void populatePokeStopHashMap() {
-        _registry.registryList.forEach(pokeStopData -> _registeredPokeStops.put(pokeStopData.getPokeStopUniqueId(), pokeStopData));
+private void populatePokeStopHashMap() {
+        _newRegistry.registryList.forEach(pokeStopData -> _registeredPokeStops.put(pokeStopData.getPokeStopUniqueId(), pokeStopData));
     }
 
 }

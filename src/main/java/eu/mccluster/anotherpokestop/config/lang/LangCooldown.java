@@ -9,7 +9,7 @@ import java.io.File;
 public class LangCooldown extends Config {
 
     @Order(1)
-    @Comment("Message the player receives when the Pokestop is on cooldown. Formatting Codes supported")
+    @Comment("Message the player receives when the Pokestop is on cooldown. Use %cooldownpokestop% to display the time")
     public String cooldownText = "Pokestop is available in %cooldownpkstop%";
 
     @Order(2)

@@ -66,8 +66,9 @@ public class Utils {
     public static String getLureType(String lure) {
 
         String configName = lure.replaceAll("pixelmon:lure_", "");
-        String cleanedConfigName = configName.replaceAll("_strong", "");
-        return capitalizeFirstLetter(cleanedConfigName.trim());
+        String cleanWeak = configName.replaceAll("_weak", "");
+        String cleanStrong = cleanWeak.replaceAll("_strong", "");
+        return capitalizeFirstLetter(cleanStrong.trim());
     }
 
     public static boolean hasPermission(EntityPlayerMP player, String permissionNode) {

@@ -7,7 +7,6 @@ import eu.mccluster.anotherpokestop.config.mainConfig.AnotherPokeStopConfig;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.server.FMLServerHandler;
-import org.lwjgl.Sys;
 
 import java.util.Objects;
 import java.util.Timer;
@@ -23,7 +22,6 @@ public class Animation {
         final int[] particles = {1};
         AnotherPokeStopConfig config = AnotherPokeStop.getConfig();
         long duration = (config.timePerRotation * 1000L) / config.numberOfParticles;
-
 
         WorldServer worldServer = FMLServerHandler.instance().getServer().getWorld(pokestop.dimension);
 
@@ -44,7 +42,15 @@ public class Animation {
                         double x = width * Math.cos(angle);
                         double z = width * Math.sin(angle);
                         particles[0] = particles[0] + 1;
-                        worldServer.spawnParticle(Objects.requireNonNull(EnumParticleTypes.getByName(settings.particleType)), true, pokestop.posX + x, pokestop.posY + height, pokestop.posZ + z, 1, 0, 0, 0, 0.0);
+                        if(settings.particleType.equals("reddust")) {
+                            float red = (1.0f / 255) * settings.colors.red;
+                            float green = (1.0f / 255) * settings.colors.green;
+                            float blue = (1.0f / 255) * settings.colors.blue;
+                            worldServer.spawnParticle(EnumParticleTypes.REDSTONE, true, pokestop.posX + x, pokestop.posY + height, pokestop.posZ + z, 0, red, green, blue, 1.0D, 0);
+                        } else {
+                            worldServer.spawnParticle(Objects.requireNonNull(EnumParticleTypes.getByName(settings.particleType)), true, pokestop.posX + x, pokestop.posY + height, pokestop.posZ + z, 1, 0, 0, 0, 0.0);
+
+                        }
                     }
                 }
             }, 0, duration);

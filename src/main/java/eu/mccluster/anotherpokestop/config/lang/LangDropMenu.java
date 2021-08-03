@@ -9,11 +9,11 @@ import java.io.File;
 public class LangDropMenu extends Config {
 
     @Order(1)
-    @Comment("Headline of the DropMenu. Formatting Codes supported")
+    @Comment("Headline of the DropMenu")
     public String header = "Pokestop-Drops";
 
     @Order(2)
-    @Comment("Close Button of the DropMenu. Formatting Codes supported")
+    @Comment("Close Button of the DropMenu")
     public String buttonText = "Close";
 
     @Override

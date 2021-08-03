@@ -1,10 +1,8 @@
 package eu.mccluster.anotherpokestop.commands;
 
 import com.pixelmonmod.pixelmon.entities.EntityPokestop;
-import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import eu.mccluster.anotherpokestop.AnotherPokeStop;
 import eu.mccluster.anotherpokestop.config.lang.LangConfig;
-import eu.mccluster.anotherpokestop.config.mainConfig.AnotherPokeStopConfig;
 import eu.mccluster.anotherpokestop.config.presets.PresetConfig;
 import eu.mccluster.anotherpokestop.config.presets.PresetTrainer;
 import eu.mccluster.anotherpokestop.objects.PokeStopData;
@@ -97,11 +95,12 @@ public class SetPokeStop extends CommandBase {
         pokestop.setCubeRange(_preset.cubeRange);
         pokestop.setSize(_preset.pokestopSize);
         playerWorld.spawnEntity(pokestop);
+        int version = 2;
         p.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &6New Pokestop set."));
 
-        PokeStopData newPokeStopData = new PokeStopData(pokestop.getUniqueID(), color, cooldownColor, playerWorld, p.posX, p.posY, p.posZ, loottable, trainer);
+        PokeStopData newPokeStopData = new PokeStopData(pokestop.getUniqueID(), version, color, cooldownColor, playerWorld.getWorldInfo().getWorldName(), p.posX, p.posY, p.posZ, loottable, trainer);
         AnotherPokeStop.getRegisteredPokeStops().put(pokestop.getUniqueID(), newPokeStopData);
-        AnotherPokeStop.getRegistry().registryList.add(newPokeStopData);
+        AnotherPokeStop.getNewRegistry().registryList.add(newPokeStopData);
         AnotherPokeStop.getInstance().saveRegistry();
     }
 }

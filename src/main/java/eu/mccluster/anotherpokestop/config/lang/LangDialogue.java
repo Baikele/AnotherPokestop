@@ -21,7 +21,7 @@ public class LangDialogue extends Config {
     public String choiceNo = "Evade the Grunt";
 
     @Order(4)
-    @Comment("Text when a Lure Module can be activated")
+    @Comment("Text when a Lure Module can be activated. Use %money% and %lure% to display the activation cost and the lure type")
     public String activateLureText = "Do you want to activate a %type% §rLure? This will cost %money% and your lure.";
 
     @Order(5)
@@ -30,14 +30,14 @@ public class LangDialogue extends Config {
 
     @Order(6)
     @Comment("Text when a Lure is already active")
-    public String lureActive = "A lure module is already active. Try it again later";
+    public String lureActive = "A lure module of the type %lure §ris already active. Try it again later";
 
     @Order(7)
     @Comment("Button to close the dialogue")
     public String closeMenu = "Goodbye";
 
     @Order(8)
-    @Comment("Message if you dont have enough money to activate a module")
+    @Comment("Message if you dont have enough money to activate a module. Use %money% to display the activation cost")
     public String notEnoughMoney = "You dont have enough money! You need %money% to activate the lure module.";
 
 
