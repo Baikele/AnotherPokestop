@@ -142,7 +142,6 @@ public class InteractEntityListener {
             AnotherPokeStop.getCurrentLootSize().replace(p.getUniqueID(), AnotherPokeStop.getCurrentLootSize().get(p.getUniqueID()) - 1);
 
             if(AnotherPokeStop.getCurrentLootSize().get(p.getUniqueID()) == 0) {
-                System.out.println("Wiping Lists");
                 AnotherPokeStop.getCurrentDrops().remove(p.getUniqueID());
                 AnotherPokeStop.getCurrentCommandDrops().remove(p.getUniqueID());
                 AnotherPokeStop.getCurrenDisplayItems().remove(p.getUniqueID());
