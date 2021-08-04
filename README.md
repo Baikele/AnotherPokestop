@@ -16,7 +16,6 @@ For more precise information visit the wiki: https://github.com/Geisterhand/Anot
 Commands:
 - /setpokestop
 - /pokestopedit
-- /setpokestopdummy
 - /removepokestop
 - /apsreload
 
@@ -26,7 +25,6 @@ Permissions:
 - anotherpokestop.set
 - anotherpokestop.edit
 - anotherpokestop.remove
-- anotherpokestop.setdummy
 - anotherpokestop.reload
 - anotherpokestop.claimpokestop
 
