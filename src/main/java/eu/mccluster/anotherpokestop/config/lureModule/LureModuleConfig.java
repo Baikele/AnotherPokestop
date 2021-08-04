@@ -22,30 +22,30 @@ public class LureModuleConfig extends Config {
     @Comment("Only use for redstone dust")
     public ParticleColor colors = new ParticleColor();
 
-    @Order(2)
+    @Order(3)
     public int activationCostWeak = 5000;
 
-    @Order(3)
+    @Order(4)
     public int activationCostStrong = 10000;
 
-    @Order(4)
+    @Order(5)
     public int spawnTicksWeak = 3;
 
-    @Order(5)
+    @Order(6)
     public int spawnTicksStrong = 6;
 
-    @Order(6)
+    @Order(7)
     @Comment("Times in second a spawnTick happens. spawnTick * spawnInterval = Overall time")
     public int spawnInterval = 10;
 
-    @Order(7)
-    @Comment("Chance that something spawns on a spawn tick")
+    @Order(8)
+    @Comment("Chance in percent something spawns on a spawn tick")
     public int spawnChance = 40;
 
-    @Order(8)
+    @Order(9)
     public int spawnQuantity = 2;
 
-    @Order(9)
+    @Order(10)
     public List<LurePokeSettings> pokeList = new ArrayList<>();
 
     public LureModuleConfig(File file) {

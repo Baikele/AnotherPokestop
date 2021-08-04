@@ -17,7 +17,7 @@ public class TrainerPokemonConfig extends Config {
     public boolean shiny = true;
 
     @Order(4)
-    public int form = 1;
+    public int form = 0;
 
     @Order(5)
     public String nature = "Adamant";
