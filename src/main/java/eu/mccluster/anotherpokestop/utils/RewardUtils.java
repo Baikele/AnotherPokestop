@@ -118,6 +118,7 @@ public class RewardUtils {
         List<ItemStack> displayList = new ArrayList<>();
         LootTableStart _lootConfig = Objects.requireNonNull(getLoottable(lootTable));
         List<LootTableData> _loot;
+        ItemStack placeHolderItem = itemStackFromType("minecraft:paper", 1);
 
         if(!rocket) {
             _loot = Objects.requireNonNull(getLoottable(lootTable)).loottable.lootData;
@@ -129,7 +130,9 @@ public class RewardUtils {
 
             for (int s = 0; s < lootAmount; s++) {
                 outCommandList.add("Placeholder");
+                outList.add(placeHolderItem);
             }
+
 
             //Calc Loot
                 raritySum = _loot.stream().mapToInt(lootTableData -> lootTableData.lootRarity).sum();
@@ -150,7 +153,7 @@ public class RewardUtils {
                         outCommandList.set(i, parsedCommand);
                     } else {
                         ItemStack rewardItem = itemStackFromType(_loot.get(listEntry).loot, _loot.get(listEntry).lootAmount);
-                        outList.add(rewardItem);
+                        outList.set(i, rewardItem);
                     }
 
                     //Generates Display Items

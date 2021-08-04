@@ -30,7 +30,7 @@ public class LangDialogue extends Config {
 
     @Order(6)
     @Comment("Text when a Lure is already active")
-    public String lureActive = "A lure module of the type %lure §ris already active. Try it again later";
+    public String lureActive = "A lure module of the type %lure% §ris already active. Try it again later";
 
     @Order(7)
     @Comment("Button to close the dialogue")

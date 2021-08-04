@@ -43,18 +43,6 @@ public class PresetConfig extends Config {
     @Comment("Min 0 | Max 255")
     public int blue = 255;
 
-    @Order(8)
-    @Comment("Min 0 | Max 255")
-    public int cooldownRed = 0;
-
-    @Order(9)
-    @Comment("Min 0 | Max 255")
-    public int cooldownGreen = 0;
-
-    @Order(10)
-    @Comment("Min 0 | Max 255")
-    public int cooldownBlue = 0;
-
     public PresetConfig(File file) {
         trainerList.add(new PresetTrainer());
         _configFile = file;

@@ -72,6 +72,7 @@ public class InteractEntityListener {
                 String toggle = "Weak";
                 DialogueUtils.genLureDialogue(pokestop, player, lureType, event.getItemStack(), toggle)
                         .open(player);
+                return;
             }
         }
 

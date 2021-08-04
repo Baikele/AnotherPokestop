@@ -14,11 +14,14 @@ public class LureScheduler {
 
 
 
-    public static void startScheduler(LureModuleConfig settings, EntityPokestop pokestop, EntityPlayerMP player, String toggle) {
+    public static void startScheduler(LureModuleConfig settings, EntityPokestop pokestop, EntityPlayerMP player, String toggle, int cost) {
 
 
-        EconomyUtils.takeMoney(player, settings.activationCostStrong);
-        Animation.startAnimation(settings, pokestop);
+        EconomyUtils.takeMoney(player, cost);
+
+        if(AnotherPokeStop.getConfig().particles) {
+            Animation.startAnimation(settings, pokestop);
+        }
         Timer timer = new Timer();
         int interval;
 

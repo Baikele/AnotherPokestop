@@ -68,21 +68,21 @@ public class DialogueUtils {
         if(!AnotherPokeStop.getInstance()._activeLure.contains(pokestop.getUniqueID())) {
             if(EconomyUtils.hasEnoughMoney(player, cost)) {
                 text = Placeholders.parseLureInfos(_lang.langDialogue.activateLureText, lureType, cost);
-                choices.add(genLureChoice(_lang.langDialogue.startLureModule, player, pokestop, settings, item, toggle));
+                choices.add(genLureChoice(_lang.langDialogue.startLureModule, player, pokestop, settings, item, toggle, cost));
             } else {
                 text = Placeholders.parseLureInfos(_lang.langDialogue.notEnoughMoney, lureType, cost);
             }
         } else {
             text = Placeholders.parseLureInfos(_lang.langDialogue.lureActive, lureType, cost);
         }
-        choices.add(genLureChoice(_lang.langDialogue.closeMenu, player, pokestop, settings, item, toggle));
+        choices.add(genLureChoice(_lang.langDialogue.closeMenu, player, pokestop, settings, item, toggle, cost));
         return Dialogue.builder()
                 .setText(text)
                 .setChoices(choices)
                 .build();
     }
 
-    public static Choice genLureChoice(String buttonText, EntityPlayerMP player, EntityPokestop pokestop, LureModuleConfig settings, ItemStack item, String toggle) {
+    public static Choice genLureChoice(String buttonText, EntityPlayerMP player, EntityPokestop pokestop, LureModuleConfig settings, ItemStack item, String toggle, int cost) {
         LangConfig _lang = AnotherPokeStop.getLang();
         return Choice.builder()
                 .setText(buttonText)
@@ -90,7 +90,7 @@ public class DialogueUtils {
 
                     if(buttonText == _lang.langDialogue.startLureModule) {
                         AnotherPokeStop.getInstance()._activeLure.add(pokestop.getUniqueID());
-                        LureScheduler.startScheduler(settings, pokestop, player, toggle);
+                        LureScheduler.startScheduler(settings, pokestop, player, toggle, cost);
                         player.inventory.clearMatchingItems(item.getItem(), item.getMetadata(), 1, item.getTagCompound());
                     } else if(buttonText == _lang.langDialogue.closeMenu) {
                         //Closes the menu

@@ -17,6 +17,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -183,14 +184,13 @@ public class AnotherPokeStop {
         loadPresets();
         loadTrainer();
 
-        if(new File(AnotherPokeStopPlugin.getInstance().getDataFolder(), "PokestopRegistry.conf").exists() && _config.migrate) {
+        if(new File(AnotherPokeStopPlugin.getInstance().getDataFolder(), "PokestopRegistry.conf").exists() && !_config.version.equals("2.0.0")) {
             _oldRegistry = new OldPokeStopRegistry(new File(AnotherPokeStopPlugin.getInstance().getDataFolder(), "PokestopRegistry.conf"));
             _oldRegistry.load();
             migratePokestops();
         } else {
             _newRegistry = new PokeStopRegistry(new File(AnotherPokeStopPlugin.getInstance().getDataFolder(), "PokestopRegistry.conf"));
             _newRegistry.load();
-            _config.changeMigration();
         }
         populatePokeStopHashMap();
         registerListeners();
@@ -294,13 +294,11 @@ public class AnotherPokeStop {
             _newRegistry = new PokeStopRegistry(new File(AnotherPokeStopPlugin.getInstance().getDataFolder(), "PokestopRegistry.conf"));
             _newRegistry.load();
             int version = 2;
-            RGBStorage cooldownColor = new RGBStorage(_preset.cooldownRed, _preset.cooldownGreen, _preset.cooldownBlue);
             for (OldPokeStopData oldAPS : _oldData) {
-                PokeStopData newData = new PokeStopData(oldAPS.getPokeStopUniqueId(), version, oldAPS.getColor(), cooldownColor, oldAPS.getWorld(), oldAPS.getPosX(), oldAPS.getPosY(), oldAPS.getPosZ(), oldAPS.getLoottable().getLoottable(), _preset.trainerList);
+                PokeStopData newData = new PokeStopData(oldAPS.getPokeStopUniqueId(), version, oldAPS.getColor(), oldAPS.getWorld(), oldAPS.getPosX(), oldAPS.getPosY(), oldAPS.getPosZ(), oldAPS.getLoottable().getLoottable(), _preset.trainerList);
                 _newRegistry.registryList.add(newData);
                 _newRegistry.save();
             }
-            _config.changeMigration();
             _config.save();
             System.out.println("Migration done!");
         }

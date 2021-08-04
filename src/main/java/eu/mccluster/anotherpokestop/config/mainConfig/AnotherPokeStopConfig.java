@@ -49,15 +49,11 @@ public class AnotherPokeStopConfig extends Config {
     public int timePerRotation = 3;
 
     @Order(9)
-    @Comment("Ignore this setting unless you have to migrate your Pokestops again!")
-    public boolean migrate = true;
+    @Comment("Don't touch this setting!!!")
+    public String version = "2.0.0";
 
     @Override
     public File getFile() {
         return _configFile;
-    }
-
-    public void changeMigration() {
-        migrate = false;
     }
 }

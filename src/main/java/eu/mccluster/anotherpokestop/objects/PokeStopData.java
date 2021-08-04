@@ -21,29 +21,26 @@ public class PokeStopData extends Config {
     @Order(3)
     private RGBStorage color = new RGBStorage();
     @Order(4)
-    private RGBStorage cooldownColor = new RGBStorage();
-    @Order(5)
     private String world;
-    @Order(6)
+    @Order(5)
     private double posX;
-    @Order(7)
+    @Order(6)
     private double posY;
-    @Order(8)
+    @Order(7)
     private double posZ;
-    @Order(9)
+    @Order(8)
     private String loottable;
-    @Order(10)
+    @Order(9)
     private List<PresetTrainer> trainer = new ArrayList<>();
 
     public PokeStopData() {
 
     }
 
-    public PokeStopData(UUID pokeStopUniqueId, int version, RGBStorage color, RGBStorage cooldownColor, String world, double posX, double posY, double posZ, String loottable, List<PresetTrainer> trainer) {
+    public PokeStopData(UUID pokeStopUniqueId, int version, RGBStorage color, String world, double posX, double posY, double posZ, String loottable, List<PresetTrainer> trainer) {
         this.pokeStopUniqueId = pokeStopUniqueId.toString();
         this.version = version;
         this.color = color;
-        this.cooldownColor = cooldownColor;
         this.world = world;
         this.posX = posX;
         this.posY = posY;
@@ -57,8 +54,6 @@ public class PokeStopData extends Config {
     public Integer getVersion() { return this.version; }
 
     public RGBStorage getColor() { return this.color; }
-
-    public RGBStorage getCooldownColor() { return this.cooldownColor; }
 
     public double getPosX() {
         return this.posX;

@@ -47,7 +47,6 @@ public class SetPokeStop extends CommandBase {
 
         EntityPlayerMP p = (EntityPlayerMP) sender;
         RGBStorage color;
-        RGBStorage cooldownColor;
         String loottable;
         List<PresetTrainer> trainer;
         PresetConfig _preset;
@@ -69,7 +68,6 @@ public class SetPokeStop extends CommandBase {
             _preset = AnotherPokeStop.getPreset();
         }
         color = new RGBStorage(_preset.red, _preset.green, _preset.blue);
-        cooldownColor = new RGBStorage(_preset.cooldownRed, _preset.cooldownGreen, _preset.cooldownBlue);
 
         if(AnotherPokeStop.getInstance()._availableLoottables.contains(_preset.loottable)) {
             loottable = _preset.loottable;
@@ -98,7 +96,7 @@ public class SetPokeStop extends CommandBase {
         int version = 2;
         p.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &6New Pokestop set."));
 
-        PokeStopData newPokeStopData = new PokeStopData(pokestop.getUniqueID(), version, color, cooldownColor, playerWorld.getWorldInfo().getWorldName(), p.posX, p.posY, p.posZ, loottable, trainer);
+        PokeStopData newPokeStopData = new PokeStopData(pokestop.getUniqueID(), version, color, playerWorld.getWorldInfo().getWorldName(), p.posX, p.posY, p.posZ, loottable, trainer);
         AnotherPokeStop.getRegisteredPokeStops().put(pokestop.getUniqueID(), newPokeStopData);
         AnotherPokeStop.getNewRegistry().registryList.add(newPokeStopData);
         AnotherPokeStop.getInstance().saveRegistry();

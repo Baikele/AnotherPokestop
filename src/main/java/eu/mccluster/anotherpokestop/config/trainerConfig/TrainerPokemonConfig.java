@@ -8,10 +8,10 @@ import java.io.File;
 public class TrainerPokemonConfig extends Config {
 
     @Order(1)
-    public String name = "Metagross";
+    public String name = "Marshadow";
 
     @Order(2)
-    public String nickname = "Ubergross";
+    public String nickname = "";
 
     @Order(3)
     public boolean shiny = true;
@@ -29,7 +29,7 @@ public class TrainerPokemonConfig extends Config {
     public String item = "leftovers";
 
     @Order(8)
-    public String ability = "Sturdy";
+    public String ability = "Technician";
 
     @Order(9)
     public String growth = "Runt";
