@@ -6,6 +6,8 @@ import eu.mccluster.dependency.configmanager.api.annotations.Order;
 import eu.mccluster.dependency.configmanager.api.annotations.Skip;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AnotherPokeStopConfig extends Config {
 
@@ -31,6 +33,10 @@ public class AnotherPokeStopConfig extends Config {
     @Order(4)
     @Comment("Enable / Disable lure modules for Pokestops")
     public boolean lureModules = false;
+
+    @Order(5)
+    @Comment("Blacklist. All worlds in that list will not be able to activate lure modules")
+    public List<String> blacklist = new ArrayList<>();
 
     @Order(5)
     @Comment("Spawn range for lure modules")

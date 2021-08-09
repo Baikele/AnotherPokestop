@@ -13,6 +13,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -55,8 +57,8 @@ public class InteractEntityListener {
         EntityPokestop pokestop = (EntityPokestop) event.getTarget();
         Item eventItem = event.getItemStack().getItem();
 
-        if(_config.lureModules) {
-            if(eventItem == Item.getByNameOrId("lure_shiny_strong") || eventItem == Item.getByNameOrId("lure_ha_strong")) {
+        if(_config.lureModules && !_config.blacklist.contains(pokestop.getEntityWorld().getWorldInfo().getWorldName())) {
+            if(eventItem == Item.getByNameOrId("lure_shiny_strong") || eventItem == Item.getByNameOrId("lure_ha_strong") || eventItem == Item.getByNameOrId("lure_ha_weak") || eventItem == Item.getByNameOrId("lure_shiny_weak")) {
                 return;
             }
             if (PixelmonItemsLures.strongLures.contains(eventItem)) {
@@ -96,10 +98,10 @@ public class InteractEntityListener {
             return;
         }
 
-        if (Utils.hasPermission(player,"anotherpokestop.claimpokestop")) {
+        if (Utils.hasPermission(player,"anotherpokestop.claimpokestop") || Utils.hasPermission(player, "anotherpokestop.bypass")) {
             String lootTable = AnotherPokeStop.getRegisteredPokeStops().get(pokeStopId).getLoottable();
             boolean cooldown = Utils.claimable(player, pokeStopId, lootTable);
-            if (cooldown) {
+            if (cooldown || Utils.hasPermission(player, "anotherpokestop.bypass")) {
                 AnotherPokeStop.getUsedPokestop().put(player.getUniqueID(), pokeStopId);
 
                 if (_config.rocketEvent) {
