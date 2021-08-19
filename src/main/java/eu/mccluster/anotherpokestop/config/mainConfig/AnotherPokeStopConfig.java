@@ -15,6 +15,7 @@ public class AnotherPokeStopConfig extends Config {
     File _configFile;
 
     public AnotherPokeStopConfig(File file) {
+
         _configFile = file;
     }
 
@@ -56,10 +57,14 @@ public class AnotherPokeStopConfig extends Config {
 
     @Order(9)
     @Comment("Don't touch this setting!!!")
-    public String version = "2.0.0";
+    public String version = "1.x.x";
 
     @Override
     public File getFile() {
         return _configFile;
+    }
+
+    public void setVersion() {
+        version = "2.0.0";
     }
 }

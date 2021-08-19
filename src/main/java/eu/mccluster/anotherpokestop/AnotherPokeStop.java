@@ -17,7 +17,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
+
 
 import java.io.*;
 import java.util.ArrayList;
@@ -134,8 +134,6 @@ public class AnotherPokeStop {
     }
 
     private void onEnable(FMLServerStartingEvent event) {
-        _config = new AnotherPokeStopConfig(new File(AnotherPokeStopPlugin.getInstance().getDataFolder(), "AnotherPokeStop.conf"));
-        _config.load();
         _lootConfig = new LootTableStart(new File(_lootFolder, "DefaultLootConfig.conf"));
         _trainer = new TrainerBaseConfig(new File(_trainerFolder, "DefaultTrainerConfig.conf"));
         _lang = new LangConfig(new File(AnotherPokeStopPlugin.getInstance().getDataFolder(), "Lang.conf"));
@@ -180,18 +178,24 @@ public class AnotherPokeStop {
         _preset.load();
         _trainer.load();
         _lang.load();
-        loadLoottables();
-        loadPresets();
-        loadTrainer();
+        _config = new AnotherPokeStopConfig(new File(AnotherPokeStopPlugin.getInstance().getDataFolder(), "AnotherPokeStop.conf"));
+        _config.load();
+
 
         if(new File(AnotherPokeStopPlugin.getInstance().getDataFolder(), "PokestopRegistry.conf").exists() && !_config.version.equals("2.0.0")) {
             _oldRegistry = new OldPokeStopRegistry(new File(AnotherPokeStopPlugin.getInstance().getDataFolder(), "PokestopRegistry.conf"));
             _oldRegistry.load();
             migratePokestops();
+            _config.setVersion();
+            _config.save();
         } else {
             _newRegistry = new PokeStopRegistry(new File(AnotherPokeStopPlugin.getInstance().getDataFolder(), "PokestopRegistry.conf"));
             _newRegistry.load();
         }
+
+        loadLoottables();
+        loadPresets();
+        loadTrainer();
         populatePokeStopHashMap();
         registerListeners();
         CommandRegistry.registerCommands(event);
