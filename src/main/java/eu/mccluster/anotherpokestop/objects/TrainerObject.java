@@ -39,7 +39,6 @@ public class TrainerObject {
         if(trainerBaseConfig == null) {
             return;
         }
-
         this._player = player;
         AnotherPokeStop.getCurrentBattles().put(player, this);
         AnotherPokeStop.getPokestopLoot().put(player, lootTable);

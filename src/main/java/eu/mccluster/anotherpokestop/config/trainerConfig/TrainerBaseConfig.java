@@ -41,6 +41,9 @@ public class TrainerBaseConfig  extends Config {
     public TrainerBattleRulesConfig battleRules = new TrainerBattleRulesConfig();
 
     @Order(7)
+    public List<String> loseCommands = new ArrayList<>();
+
+    @Order(8)
     public List<TrainerTeamConfig> trainerTeams = new ArrayList<>();
 
     public TrainerBaseConfig(File file) {

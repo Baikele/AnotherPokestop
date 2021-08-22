@@ -12,7 +12,9 @@ import eu.mccluster.anotherpokestop.config.presets.PresetTrainer;
 import eu.mccluster.anotherpokestop.config.trainerConfig.TrainerBaseConfig;
 import eu.mccluster.anotherpokestop.objects.PlayerCooldowns;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.server.permission.PermissionAPI;
 
 import java.io.File;
@@ -131,6 +133,11 @@ public class Utils {
             return presetData;
         }
         return null;
+    }
+
+    public static void executeFromConsole(String command, EntityPlayerMP playerMP) {
+        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+        server.getCommandManager().executeCommand(server, Placeholders.parsePlayerPlaceholder(command, playerMP));
     }
 }
 
