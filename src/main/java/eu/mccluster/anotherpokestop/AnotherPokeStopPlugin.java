@@ -7,7 +7,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import org.apache.logging.log4j.Logger;
 
 import java.io.*;
@@ -52,5 +51,4 @@ public class AnotherPokeStopPlugin {
         depLoader.loadDependency("eu.mccluster.dependency:configmanager-dependency:1.1");
 
     }
-
 }

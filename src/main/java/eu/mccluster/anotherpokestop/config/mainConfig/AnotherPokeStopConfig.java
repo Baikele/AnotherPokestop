@@ -32,30 +32,34 @@ public class AnotherPokeStopConfig extends Config {
     public int rocketChance = 5;
 
     @Order(4)
+    @Comment("Blacklist for Trainers. All world in that list will deactivate Trainer Encounters from Pokestops")
+    public List<String> blackListTrainer = new ArrayList<>();
+
+    @Order(5)
     @Comment("Enable / Disable lure modules for Pokestops")
     public boolean lureModules = false;
 
-    @Order(5)
+    @Order(6)
     @Comment("Blacklist. All worlds in that list will not be able to activate lure modules")
-    public List<String> blacklist = new ArrayList<>();
+    public List<String> blacklistLures = new ArrayList<>();
 
-    @Order(5)
+    @Order(7)
     @Comment("Spawn range for lure modules")
     public int spawnRadius = 8;
 
-    @Order(6)
+    @Order(8)
     @Comment("Enable / Disable particles indicating a active lure module")
     public boolean particles = true;
 
-    @Order(7)
+    @Order(9)
     @Comment("Amount of particles per rotation. Scale this wih caution")
     public int numberOfParticles = 20;
 
-    @Order(8)
+    @Order(10)
     @Comment("Time in seconds how long an animation cycle lasts")
     public int timePerRotation = 3;
 
-    @Order(9)
+    @Order(11)
     @Comment("Don't touch this setting!!!")
     public String version = "1.x.x";
 

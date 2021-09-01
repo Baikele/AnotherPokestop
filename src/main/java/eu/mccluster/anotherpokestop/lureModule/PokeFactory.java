@@ -53,6 +53,12 @@ public class PokeFactory {
                 pos = new BlockPos(x, y, z);
                 material = pokestop.getEntityWorld().getBlockState(pos).getMaterial();
             }
+        } else {
+            while(material == Material.AIR) {
+                y = y - 1;
+                pos = new BlockPos(x, y, z);
+                material = pokestop.getEntityWorld().getBlockState(pos).getMaterial();
+            }
         }
 
 
