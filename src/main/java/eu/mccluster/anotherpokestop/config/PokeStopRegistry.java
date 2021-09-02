@@ -22,8 +22,16 @@ public class PokeStopRegistry extends Config {
     @Comment("Don't change this by hand on any case or else your Pokestops will be broke!")
     public List<PokeStopData> registryList = new ArrayList<>();
 
+    @Order(2)
+    @Comment("Loot Multiplier")
+    public double lootMultiplier = 1.0;
+
     @Override
     public File getFile() {
         return _registryFile;
+    }
+
+    public void setMultiplier(double multiplier) {
+        lootMultiplier = multiplier;
     }
 }

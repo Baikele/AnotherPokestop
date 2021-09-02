@@ -112,7 +112,7 @@ public class RewardUtils {
     public static void pokestopLoot(EntityPlayerMP player, boolean rocket, String lootTable) {
 
         int raritySum;
-        int lootAmount;
+        double lootConfigAmount;
         List<ItemStack> outList = new ArrayList<>();
         List<String> outCommandList = new ArrayList<>();
         List<ItemStack> displayList = new ArrayList<>();
@@ -122,11 +122,13 @@ public class RewardUtils {
 
         if(!rocket) {
             _loot = Objects.requireNonNull(getLoottable(lootTable)).loottable.lootData;
-            lootAmount = _lootConfig.loottable.lootSize;
+            lootConfigAmount = _lootConfig.loottable.lootSize * AnotherPokeStop.getNewRegistry().lootMultiplier;
         } else {
             _loot = Objects.requireNonNull(getLoottable(lootTable)).loottable.rocketData;
-            lootAmount = _lootConfig.loottable.rocketLootSize;
+            lootConfigAmount = _lootConfig.loottable.rocketLootSize * AnotherPokeStop.getNewRegistry().lootMultiplier;
         }
+
+        int lootAmount = (int) Math.round(lootConfigAmount);
 
             for (int s = 0; s < lootAmount; s++) {
                 outCommandList.add("Placeholder");
