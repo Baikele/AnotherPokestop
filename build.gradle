@@ -59,7 +59,7 @@ repositories {
 
 dependencies {
     minecraft "net.minecraftforge:forge:" + modMinecraftVersion + "-" + modForgeVersion
-    implementation ":Pixelmon-1.12.2-8.2.0-server:8.2.0"
+    implementation ":Pixelmon-1.12.2-8.3.0-server:8.3.0"
     compile "eu.mccluster.dependency:configmanager-api:1.1-SNAPSHOT"
     shadow "eu.mccluster.dependency:deploader-api:1.2-SNAPSHOT"
 }

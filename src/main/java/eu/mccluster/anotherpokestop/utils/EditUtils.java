@@ -24,6 +24,7 @@ public class EditUtils {
                     pokestop.setDead();
                     player.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &6Pokestop removed."));
                 AnotherPokeStop.getCurrentEditor().remove(player.getUniqueID());
+                AnotherPokeStop.getInstance()._activeLure.remove(pokestop.getUniqueID());
                 break;
 
             case "ROTATION":

@@ -39,6 +39,11 @@ public class LureScheduler {
                     timer.cancel();
                     timer.purge();
                     AnotherPokeStop.getInstance()._activeLure.remove(pokestop.getUniqueID());
+                }
+                else if(!AnotherPokeStop.getInstance()._activeLure.contains(pokestop.getUniqueID())) {
+                    timer.cancel();
+                    timer.purge();
+
                 } else {
                     int doSpawn = (int) (Math.random() * 100) + 1;
 
