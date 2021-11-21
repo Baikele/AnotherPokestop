@@ -6,8 +6,6 @@ New Pokestop Plugin that uses the with 8.2 implemented EntityPokestop
 Requirements:
 - Pixelmon Reforged
 
-Additional Information:
-A private DependencyLoader from https://github.com/HexagonMC is used. The DependencyLoader loads a private ConfigManager.
 
 ## Commands
 
