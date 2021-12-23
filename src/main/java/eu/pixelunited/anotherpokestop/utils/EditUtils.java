@@ -23,8 +23,8 @@ public class EditUtils {
 
             case "REMOVE":
                     _registry.registryList.remove(index);
-                    AnotherPokeStop.getInstance().saveRegistry(_registry);
                     AnotherPokeStop.getRegisteredPokeStops().remove(pokestop.getUniqueID());
+                    AnotherPokeStop.getInstance().saveRegistry(_registry);
                     pokestop.setDead();
                     player.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &6Pokestop removed."));
                 AnotherPokeStop.getCurrentEditor().remove(player.getUniqueID());

@@ -159,7 +159,7 @@ public class AnotherPokeStop {
         loadLoottables();
         loadPresets();
         loadTrainer();
-        populatePokeStopHashMap(_registry);
+        populatePokeStopHashMap();
         registerListeners();
         CommandRegistry.registerCommands(event);
     }
@@ -168,13 +168,14 @@ public class AnotherPokeStop {
         loadLoottables();
         loadPresets();
         loadTrainer();
+        populatePokeStopHashMap();
     }
 
 
 
     public void saveRegistry(PokeStopRegistry registry) {
         ConfigManagement.getInstance().saveConfig(registry, Paths.get(MAIN_PATH + File.separator + "PokestopRegistry.yml"));
-        populatePokeStopHashMap(registry);
+        populatePokeStopHashMap();
     }
 
     private void registerListeners() {
@@ -230,7 +231,8 @@ public class AnotherPokeStop {
     }
 
 
-private void populatePokeStopHashMap(PokeStopRegistry registry) {
+private void populatePokeStopHashMap() {
+        PokeStopRegistry registry = ConfigManagement.getInstance().loadConfig(PokeStopRegistry.class, Paths.get(MAIN_PATH + File.separator + "PokestopRegistry.yml"));
         registry.registryList.forEach(pokeStopData -> _registeredPokeStops.put(pokeStopData.getPokeStopUniqueId(), pokeStopData));
     }
 

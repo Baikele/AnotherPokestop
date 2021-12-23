@@ -27,9 +27,6 @@ import java.util.UUID;
 public class InteractEntityListener {
 
     final AnotherPokeStop _plugin;
-    static AnotherPokeStopConfig _config = ConfigManagement.getInstance().loadConfig(AnotherPokeStopConfig.class, Paths.get(AnotherPokeStop.MAIN_PATH + File.separator + "AnotherPokeStop.yml"));
-    static LangConfig _lang = ConfigManagement.getInstance().loadConfig(LangConfig.class, Paths.get(AnotherPokeStop.MAIN_PATH + File.separator + "Lang.yml"));
-    static PokeStopRegistry _registry = ConfigManagement.getInstance().loadConfig(PokeStopRegistry.class, Paths.get(AnotherPokeStop.MAIN_PATH + File.separator + "PokestopRegistry.yml"));
 
 
     public InteractEntityListener(AnotherPokeStop plugin) {
@@ -38,6 +35,11 @@ public class InteractEntityListener {
 
     @SubscribeEvent
     public void onEntityRightClick(PlayerInteractEvent.EntityInteract event) {
+
+        AnotherPokeStopConfig _config = ConfigManagement.getInstance().loadConfig(AnotherPokeStopConfig.class, Paths.get(AnotherPokeStop.MAIN_PATH + File.separator + "AnotherPokeStop.yml"));
+        LangConfig _lang = ConfigManagement.getInstance().loadConfig(LangConfig.class, Paths.get(AnotherPokeStop.MAIN_PATH + File.separator + "Lang.yml"));
+        PokeStopRegistry _registry = ConfigManagement.getInstance().loadConfig(PokeStopRegistry.class, Paths.get(AnotherPokeStop.MAIN_PATH + File.separator + "PokestopRegistry.yml"));
+
         if (!(event.getTarget() instanceof EntityPokestop)) {
             return;
         }
@@ -80,8 +82,10 @@ public class InteractEntityListener {
             if(!AnotherPokeStop.getRegisteredPokeStops().containsKey(pokeStopId)) {
                 pokestop.setDead();
                 player.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &6Removed deprecated Pokestop."));
+                AnotherPokeStop.getCurrentEditor().remove(player.getUniqueID());
                 return;
             }
+
             for (int i = 0; i <= _registry.registryList.size(); i++) {
                     boolean containsKey = AnotherPokeStop.getRegisteredPokeStops().containsKey(_registry.registryList.get(i).getPokeStopUniqueId());
                     if (containsKey) {
@@ -154,6 +158,8 @@ public class InteractEntityListener {
 
     @SubscribeEvent
     public void onCloseClick(CustomDropsEvent.ClickButton event) {
+        AnotherPokeStopConfig _config = ConfigManagement.getInstance().loadConfig(AnotherPokeStopConfig.class, Paths.get(AnotherPokeStop.MAIN_PATH + File.separator + "AnotherPokeStop.yml"));
+
 
         EntityPlayerMP p = event.getPlayer();
 

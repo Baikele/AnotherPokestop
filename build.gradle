@@ -66,8 +66,14 @@ dependencies {
 }
 
 shadowJar {
-    configurations = [project.configurations.shadow]
-    classifier ''
+    configurations = Arrays.asList(project.configurations.shadow)
+    relocate('org.spongepowered.configurate', 'eu.pixelunited.anotherpokestop.dependencies.configurate') {
+        exclude 'META-INF', 'META-INF/**'
+    }
+    relocate 'org.yaml.snakeyaml', 'eu.pixelunited.anotherpokestop.dependencies.snakeyaml'
+
+    archiveClassifier.set("")
+    minimize()
 }
 
 reobf {
