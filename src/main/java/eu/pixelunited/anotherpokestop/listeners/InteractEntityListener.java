@@ -65,16 +65,20 @@ public class InteractEntityListener {
                 int index = PixelmonItemsLures.strongLures.indexOf(eventItem);
                 String lureType = Utils.getLureType(Objects.requireNonNull(PixelmonItemsLures.strongLures.get(index).getRegistryName()).toString());
                 String toggle = "Strong";
-                DialogueUtils.genLureDialogue(pokestop, player, lureType, event.getItemStack(), toggle)
-                        .open(player);
-                return;
+                if(!AnotherPokeStop.getRegisteredPokeStops().get(pokeStopId).getLureRestriction().contains(lureType.toUpperCase())) {
+                    DialogueUtils.genLureDialogue(pokestop, player, lureType, event.getItemStack(), toggle)
+                            .open(player);
+                    return;
+                }
             } else if(PixelmonItemsLures.weakLures.contains(eventItem)) {
                 int index = PixelmonItemsLures.weakLures.indexOf(eventItem);
                 String lureType = Utils.getLureType(Objects.requireNonNull(PixelmonItemsLures.weakLures.get(index).getRegistryName()).toString());
                 String toggle = "Weak";
-                DialogueUtils.genLureDialogue(pokestop, player, lureType, event.getItemStack(), toggle)
-                        .open(player);
-                return;
+                if(!AnotherPokeStop.getRegisteredPokeStops().get(pokeStopId).getLureRestriction().contains(lureType.toUpperCase())) {
+                    DialogueUtils.genLureDialogue(pokestop, player, lureType, event.getItemStack(), toggle)
+                            .open(player);
+                    return;
+                }
             }
         }
 

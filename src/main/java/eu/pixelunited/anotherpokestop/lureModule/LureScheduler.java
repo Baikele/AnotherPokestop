@@ -3,10 +3,13 @@ package eu.pixelunited.anotherpokestop.lureModule;
 import com.pixelmonmod.pixelmon.entities.EntityPokestop;
 import eu.pixelunited.anotherpokestop.AnotherPokeStop;
 import eu.pixelunited.anotherpokestop.config.lureModule.LureModuleConfig;
+import eu.pixelunited.anotherpokestop.config.lureModule.LurePokeSettings;
 import eu.pixelunited.anotherpokestop.utils.EconomyUtils;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -14,7 +17,7 @@ public class LureScheduler {
 
 
 
-    public static void startScheduler(LureModuleConfig settings, EntityPokestop pokestop, EntityPlayerMP player, String toggle, int cost) {
+    public static void startScheduler(LureModuleConfig settings, EntityPokestop pokestop, EntityPlayerMP player, String toggle, int cost, List<LurePokeSettings> list) {
 
 
         EconomyUtils.takeMoney(player, cost);
@@ -48,14 +51,14 @@ public class LureScheduler {
                     int doSpawn = (int) (Math.random() * 100) + 1;
 
                     if (doSpawn <= settings.spawnChance) {
-                        int raritySum = settings.pokeList.stream().mapToInt(pokeSettings -> pokeSettings.rarity).sum();
+                        int raritySum = list.stream().mapToInt(pokeSettings -> pokeSettings.rarity).sum();
                         for (int i = 0; i < settings.spawnQuantity; i++) {
                             int pickedRarity = (int) (raritySum * Math.random());
                             int index = -1;
 
                             for (int b = 0; b <= pickedRarity; ) {
                                 index = index + 1;
-                                b = settings.pokeList.get(index).rarity + b;
+                                b = list.get(index).rarity + b;
 
                             }
                             LureScheduler.runSync(settings, pokestop, index);

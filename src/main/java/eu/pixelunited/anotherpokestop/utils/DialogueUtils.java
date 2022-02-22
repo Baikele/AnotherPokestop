@@ -7,6 +7,7 @@ import eu.pixelunited.anotherpokestop.AnotherPokeStop;
 import eu.pixelunited.anotherpokestop.ConfigManagement;
 import eu.pixelunited.anotherpokestop.config.lang.LangConfig;
 import eu.pixelunited.anotherpokestop.config.lureModule.LureModuleConfig;
+import eu.pixelunited.anotherpokestop.config.lureModule.LurePokeSettings;
 import eu.pixelunited.anotherpokestop.config.trainerConfig.TrainerBaseConfig;
 import eu.pixelunited.anotherpokestop.lureModule.LureScheduler;
 import eu.pixelunited.anotherpokestop.objects.TrainerObject;
@@ -61,29 +62,34 @@ public class DialogueUtils {
         String text;
         LureModuleConfig settings = ConfigManagement.getInstance().loadConfig(LureModuleConfig.class, Paths.get(AnotherPokeStop.LURE_PATH + File.separator + lureType + ".yml"));
         int cost;
+        List<LurePokeSettings> list = new ArrayList<>();
         if (toggle.equals("Weak")) {
             cost = settings.activationCostWeak;
+            list = settings.pokeListWeak;
         } else {
             cost = settings.activationCostStrong;
+            list = settings.pokeList;
         }
         if(!AnotherPokeStop.getInstance()._activeLure.contains(pokestop.getUniqueID())) {
             if(EconomyUtils.hasEnoughMoney(player, cost)) {
                 text = Placeholders.parseLureInfos(_lang.langDialogue.activateLureText, lureType, cost);
-                choices.add(genLureChoice(_lang.langDialogue.startLureModule, player, pokestop, settings, item, toggle, cost));
+                choices.add(genLureChoice(_lang.langDialogue.startLureModule, player, pokestop, settings, item, toggle, cost, list));
             } else {
                 text = Placeholders.parseLureInfos(_lang.langDialogue.notEnoughMoney, lureType, cost);
             }
         } else {
             text = Placeholders.parseLureInfos(_lang.langDialogue.lureActive, lureType, cost);
         }
-        choices.add(genLureChoice(_lang.langDialogue.closeMenu, player, pokestop, settings, item, toggle, cost));
+        choices.add(genLureChoice(_lang.langDialogue.closeMenu, player, pokestop, settings, item, toggle, cost, list));
         return Dialogue.builder()
                 .setText(text)
                 .setChoices(choices)
                 .build();
     }
 
-    public static Choice genLureChoice(String buttonText, EntityPlayerMP player, EntityPokestop pokestop, LureModuleConfig settings, ItemStack item, String toggle, int cost) {
+
+
+    public static Choice genLureChoice(String buttonText, EntityPlayerMP player, EntityPokestop pokestop, LureModuleConfig settings, ItemStack item, String toggle, int cost, List<LurePokeSettings> list) {
         LangConfig _lang = AnotherPokeStop.getLang();
         return Choice.builder()
                 .setText(buttonText)
@@ -91,7 +97,7 @@ public class DialogueUtils {
 
                     if(buttonText == _lang.langDialogue.startLureModule) {
                         AnotherPokeStop.getInstance()._activeLure.add(pokestop.getUniqueID());
-                        LureScheduler.startScheduler(settings, pokestop, player, toggle, cost);
+                        LureScheduler.startScheduler(settings, pokestop, player, toggle, cost, list);
                         player.inventory.clearMatchingItems(item.getItem(), item.getMetadata(), 1, item.getTagCompound());
                     } else if(buttonText == _lang.langDialogue.closeMenu) {
                         //Closes the menu

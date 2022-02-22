@@ -19,6 +19,7 @@ import net.minecraft.world.World;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -99,8 +100,9 @@ public class SetPokeStop extends CommandBase {
         playerWorld.spawnEntity(pokestop);
         int version = 2;
         p.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &6New Pokestop set."));
+        List<String> lureRestriction = new ArrayList<>();
 
-        PokeStopData newPokeStopData = new PokeStopData(pokestop.getUniqueID(), version, color, playerWorld.getWorldInfo().getWorldName(), p.posX, p.posY, p.posZ, loottable, trainer);
+        PokeStopData newPokeStopData = new PokeStopData(pokestop.getUniqueID(), version, color, playerWorld.getWorldInfo().getWorldName(), p.posX, p.posY, p.posZ, loottable, trainer, lureRestriction);
         PokeStopRegistry registry = ConfigManagement.getInstance().loadConfig(PokeStopRegistry.class, Paths.get(AnotherPokeStop.MAIN_PATH + File.separator + "PokestopRegistry.yml"));
         AnotherPokeStop.getRegisteredPokeStops().put(pokestop.getUniqueID(), newPokeStopData);
         registry.registryList.add(newPokeStopData);

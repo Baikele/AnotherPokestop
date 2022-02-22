@@ -86,7 +86,15 @@ public class Pokestopedit extends CommandBase {
                     AnotherPokeStop.getCurrentEditor().put(p.getUniqueID(), preset);
                     p.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &6Click on Pokestop to edit."));
                 }
+            } else if(object.equals("restrict")) {
+                List<String> restrict = new ArrayList<>();
+                restrict.add(object);
+                restrict.add(option);
+                AnotherPokeStop.getCurrentEditor().put(p.getUniqueID(), restrict);
+                p.sendMessage(Utils.toText("[&dAnotherPokeStop&r] &6Click on Pokestop to edit."));
             }
+
+
         } else if(args.length == 1) {
             String object = args[0];
             if(object.equals("position")) {

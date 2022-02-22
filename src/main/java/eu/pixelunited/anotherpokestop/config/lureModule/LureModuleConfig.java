@@ -33,6 +33,8 @@ public class LureModuleConfig {
 
     public List<LurePokeSettings> pokeList = new ArrayList<>();
 
+    public List<LurePokeSettings> pokeListWeak = new ArrayList<>();
+
     public LureModuleConfig() {
         pokeList.add(new LurePokeSettings());
     }

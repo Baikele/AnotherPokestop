@@ -28,11 +28,13 @@ public class PokeStopData {
 
     private List<PresetTrainer> trainer = new ArrayList<>();
 
+    private List<String> lureRestriction = new ArrayList<>();
+
     public PokeStopData() {
 
     }
 
-    public PokeStopData(UUID pokeStopUniqueId, int version, RGBStorage color, String world, double posX, double posY, double posZ, String loottable, List<PresetTrainer> trainer) {
+    public PokeStopData(UUID pokeStopUniqueId, int version, RGBStorage color, String world, double posX, double posY, double posZ, String loottable, List<PresetTrainer> trainer, List<String> lureRestriction) {
         this.pokeStopUniqueId = pokeStopUniqueId.toString();
         this.version = version;
         this.color = color;
@@ -42,6 +44,7 @@ public class PokeStopData {
         this.posZ = posZ;
         this.loottable = loottable;
         this.trainer = trainer;
+        this.lureRestriction = lureRestriction;
     }
 
     public UUID getPokeStopUniqueId() { return UUID.fromString(this.pokeStopUniqueId); }
@@ -67,5 +70,7 @@ public class PokeStopData {
     public String getLoottable() { return this.loottable; }
 
     public List<PresetTrainer> getTrainer() { return this.trainer; }
+
+    public List<String> getLureRestriction() {return this.lureRestriction; }
 
 }
