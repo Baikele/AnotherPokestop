@@ -181,7 +181,6 @@ public class AnotherPokeStop {
     private void registerListeners() {
         InteractEntityListener entityListener = new InteractEntityListener(this);
         MinecraftForge.EVENT_BUS.register(new PlayerLeftListener(this));
-        MinecraftForge.EVENT_BUS.register(new PokeStopFishingEvent());
         MinecraftForge.EVENT_BUS.register(entityListener);
         Pixelmon.EVENT_BUS.register(entityListener);
         Pixelmon.EVENT_BUS.register(new BattleEndListener(_lang));
